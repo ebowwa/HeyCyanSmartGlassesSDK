@@ -139,6 +139,54 @@ Add to your app's `Info.plist`:
 <string>This app needs Bluetooth to communicate with HeyCyan glasses</string>
 ```
 
+## Proprietary Protocol Information
+
+This SDK encapsulates the proprietary BLE communication protocol for HeyCyan glasses. Without this SDK, developers would need to reverse-engineer the following:
+
+### BLE Service & Characteristic UUIDs
+- **Primary Service UUID**: Proprietary (hidden in compiled framework)
+- **Command Characteristic UUID**: For sending commands to device
+- **Notification Characteristic UUID**: For receiving device responses
+- **Data Transfer Characteristic UUID**: For large data transfers (AI images)
+
+### Command Protocol Structure
+Each command follows a specific byte format:
+- **Header**: Command identifier bytes
+- **Payload**: Command-specific data
+- **Checksum**: Validation bytes
+- **Acknowledgment**: Required response format
+
+### Key Command Sequences (Examples)
+- **Take Photo**: Specific byte sequence with mode flags
+- **Battery Status**: Request/response packet structure
+- **AI Image Transfer**: Multi-packet protocol with reassembly logic
+- **Version Info**: Structured response parsing for multiple version fields
+
+### Authentication & Handshake
+- Initial pairing sequence
+- Session establishment protocol
+- Keep-alive requirements
+- Disconnection handling
+
+### Data Encoding Formats
+- **Battery Level**: Byte to percentage conversion
+- **Media Counts**: Multi-byte integer encoding
+- **Timestamp Format**: Device-specific time representation
+- **Image Data**: Chunked transfer protocol with headers
+
+### State Management
+- Recording state transitions
+- Mode switching sequences
+- Error state recovery protocols
+- Concurrent operation restrictions
+
+Without this SDK, implementing device communication would require:
+1. BLE packet sniffing during device operations
+2. Reverse-engineering command structures through trial and error
+3. Implementing proper error handling for undocumented states
+4. Managing complex multi-packet data transfers
+5. Handling device-specific quirks and timing requirements
+
 ## Troubleshooting
 
 - **Cannot find devices**: Ensure Bluetooth is enabled and glasses are in pairing mode
