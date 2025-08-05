@@ -143,11 +143,14 @@ Add to your app's `Info.plist`:
 
 This SDK encapsulates the proprietary BLE communication protocol for HeyCyan glasses. Without this SDK, developers would need to reverse-engineer the following:
 
-### BLE Service & Characteristic UUIDs
-- **Primary Service UUID**: Proprietary (hidden in compiled framework)
-- **Command Characteristic UUID**: For sending commands to device
-- **Notification Characteristic UUID**: For receiving device responses
-- **Data Transfer Characteristic UUID**: For large data transfers (AI images)
+### BLE Service & Characteristic UUIDs (Found in Binary)
+- **Primary Service UUID**: `7905FFF0-B5CE-4E99-A40F-4B1E122D00D0`
+- **Secondary Service UUID**: `6e40fff0-b5a3-f393-e0a9-e50e24dcca9e`
+- **QCSDKSERVERUUID1**: Internal service identifier
+- **QCSDKSERVERUUID2**: Internal service identifier
+- **Command Characteristic**: Write characteristic for device commands
+- **Notification Characteristic**: For receiving device responses and status updates
+- **Data Transfer Characteristic**: For large data transfers (AI images)
 
 ### Command Protocol Structure
 Each command follows a specific byte format:
@@ -157,10 +160,13 @@ Each command follows a specific byte format:
 - **Acknowledgment**: Required response format
 
 ### Key Command Sequences (Examples)
-- **Take Photo**: Specific byte sequence with mode flags
-- **Battery Status**: Request/response packet structure
-- **AI Image Transfer**: Multi-packet protocol with reassembly logic
-- **Version Info**: Structured response parsing for multiple version fields
+- **Take Photo**: `QCOperatorDeviceModePhoto` command with specific byte encoding
+- **Battery Status**: Request/response with battery level (0-100) and charging flag
+- **AI Image Transfer**: `QCOperatorDeviceModeAIPhoto` triggers multi-packet protocol
+- **Version Info**: Returns hardware version, firmware version, WiFi hardware/firmware versions
+- **Media Counts**: Returns photo count, video count, audio count as integers
+- **Video Control**: `QCOperatorDeviceModeVideo` / `QCOperatorDeviceModeVideoStop`
+- **Audio Control**: `QCOperatorDeviceModeAudio` / `QCOperatorDeviceModeAudioStop`
 
 ### Authentication & Handshake
 - Initial pairing sequence
@@ -169,16 +175,20 @@ Each command follows a specific byte format:
 - Disconnection handling
 
 ### Data Encoding Formats
-- **Battery Level**: Byte to percentage conversion
-- **Media Counts**: Multi-byte integer encoding
-- **Timestamp Format**: Device-specific time representation
-- **Image Data**: Chunked transfer protocol with headers
+- **Battery Level**: NSInteger (0-100) with BOOL charging flag
+- **Media Counts**: NSInteger values for photo, video, audio counts
+- **Timestamp Format**: Uses iOS device time via `setupDeviceDateTime`
+- **Image Data**: NSData chunks received via `didReceiveAIChatImageData` delegate
+- **MAC Address**: String format returned by `getDeviceMacAddress`
+- **Version Strings**: Multiple version fields (hardware, firmware, WiFi versions)
 
 ### State Management
-- Recording state transitions
-- Mode switching sequences
-- Error state recovery protocols
-- Concurrent operation restrictions
+- **Connection States**: `QCStateUnbind`, `QCStateConnecting`, `QCStateConnected`, `QCStateDisconnecting`, `QCStateDisconnected`
+- **Bluetooth States**: Via `QCBluetoothState` enum
+- **Recording States**: Tracked via `recordingVideo` and `recordingAudio` flags
+- **Mode Restrictions**: Cannot record video and audio simultaneously
+- **Delegate Callbacks**: `QCSDKManagerDelegate` for battery, media updates, AI image data
+- **Error Handling**: Fail blocks return current device mode on mode switch failures
 
 Without this SDK, implementing device communication would require:
 1. BLE packet sniffing during device operations
