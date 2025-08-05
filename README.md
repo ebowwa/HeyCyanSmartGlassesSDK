@@ -207,6 +207,13 @@ Without this SDK, implementing device communication would require:
 
 This SDK is proprietary software. Contact HeyCyan for licensing information.
 
+## Additional Documentation
+
+For more detailed technical information, see our GitHub issues:
+
+- **[Issue #1: Convert Objective-C SDK to Swift Library](https://github.com/ebowwa/HeyCyanGlassesSDK-IOS/issues/1)** - Comprehensive guide for creating a modern Swift wrapper with async/await, Combine, and SwiftUI support
+- **[Issue #2: Complete Device I/O Documentation](https://github.com/ebowwa/HeyCyanGlassesSDK-IOS/issues/2)** - Exhaustive documentation of every input/output operation with exact code examples and expected responses
+
 ## Support
 
 For technical support or questions about the SDK, please contact the HeyCyan development team.
