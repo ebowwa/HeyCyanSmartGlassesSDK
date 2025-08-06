@@ -5,7 +5,7 @@ Comprehensive SDKs for controlling HeyCyan smart glasses via Bluetooth Low Energ
 ## Platform Support
 
 - **iOS**: Full SDK available with demo application (see `ios/` directory)
-- **Android**: Coming soon (see `android/` directory)
+- **Android**: Full SDK available with demo application (see `android/` directory)
 
 ## Overview
 
@@ -47,7 +47,10 @@ HeyCyanGlassesSDK/
 │   │   ├── QCScanViewController.* # Device scanning
 │   │   └── QCCentralManager.* # BLE connection management
 │   └── QCSDKDemo.xcodeproj  # Xcode project file
-└── android/                  # Android SDK (Coming Soon)
+└── android/                  # Android SDK
+    ├── glasses_sdk_*.aar     # Android SDK library
+    ├── GlassesSDKSample/     # Sample application
+    └── Android_SDK_Development_Guide_CN.pdf
 ```
 
 ## Requirements
@@ -214,12 +217,17 @@ Without this SDK, implementing device communication would require:
 
 This SDK is proprietary software. Contact HeyCyan for licensing information.
 
+## Branches
+
+- **`main`** - Current development branch with improvements and modifications
+- **`manufacturer-original`** - Preserved original SDK from manufacturer (unmodified baseline)
+
 ## Additional Documentation
 
 For more detailed technical information, see our GitHub issues:
 
-- **[Issue #1: Convert Objective-C SDK to Swift Library](https://github.com/ebowwa/HeyCyanGlassesSDK-IOS/issues/1)** - Comprehensive guide for creating a modern Swift wrapper with async/await, Combine, and SwiftUI support
-- **[Issue #2: Complete Device I/O Documentation](https://github.com/ebowwa/HeyCyanGlassesSDK-IOS/issues/2)** - Exhaustive documentation of every input/output operation with exact code examples and expected responses
+- **[Issue #1: Convert Objective-C SDK to Swift Library](https://github.com/ebowwa/HeyCyanGlassesSDK/issues/1)** - Comprehensive guide for creating a modern Swift wrapper with async/await, Combine, and SwiftUI support
+- **[Issue #2: Complete Device I/O Documentation](https://github.com/ebowwa/HeyCyanGlassesSDK/issues/2)** - Exhaustive documentation of every input/output operation with exact code examples and expected responses
 
 ## Support
 
