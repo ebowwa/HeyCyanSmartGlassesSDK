@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GlassesSDKSample</string>
+    <string name="text_1">扫描</string>
+    <string name="text_2">重连</string>
+    <string name="text_3">断开</string>
+    <string name="text_4">设置时间</string>
+    <string name="text_22">连接中...</string>
+    <string name="text_5">获取版本</string>
+    <string name="text_6">拍照</string>
+    <string name="text_7">录像</string>
+    <string name="text_8">录音</string>
+    <string name="text_9">智能拍照识图</string>
+    <string name="text_10">BT配对</string>
+    <string name="text_11">注册上报监听</string>
+    <string name="text_12">电量</string>
+    <string name="text_13">音量读取</string>
+    <string name="text_14">读取眼镜媒体的数量</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GlassesSDKSample" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <!-- Secondary brand color. -->
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--        <item name="android:navigationBarColor">@color/g_bg_color</item>-->
+
+    </style>
+</resources>
