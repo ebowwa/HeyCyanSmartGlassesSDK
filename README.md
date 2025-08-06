@@ -6,6 +6,7 @@ Comprehensive SDKs for controlling HeyCyan smart glasses via Bluetooth Low Energ
 
 - **iOS**: Full SDK available with demo application (see `ios/` directory)
 - **Android**: Full SDK available with demo application (see `android/` directory)
+- **Python**: Cross-platform SDK with async/await API (see `python/` directory)
 
 ## Overview
 
@@ -47,10 +48,14 @@ HeyCyanGlassesSDK/
 │   │   ├── QCScanViewController.* # Device scanning
 │   │   └── QCCentralManager.* # BLE connection management
 │   └── QCSDKDemo.xcodeproj  # Xcode project file
-└── android/                  # Android SDK
-    ├── glasses_sdk_*.aar     # Android SDK library
-    ├── GlassesSDKSample/     # Sample application
-    └── Android_SDK_Development_Guide_CN.pdf
+├── android/                  # Android SDK
+│   ├── glasses_sdk_*.aar     # Android SDK library
+│   ├── GlassesSDKSample/     # Sample application
+│   └── Android_SDK_Development_Guide_CN.pdf
+└── python/                   # Python SDK
+    ├── heycyan_sdk/          # SDK package
+    ├── examples/             # Example scripts
+    └── README.md             # Python documentation
 ```
 
 ## Requirements
