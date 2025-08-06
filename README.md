@@ -1,10 +1,15 @@
-# HeyCyan Glasses SDK for iOS
+# HeyCyan Glasses SDK
 
-A comprehensive iOS SDK and demo application for controlling HeyCyan smart glasses via Bluetooth Low Energy (BLE).
+Comprehensive SDKs for controlling HeyCyan smart glasses via Bluetooth Low Energy (BLE).
+
+## Platform Support
+
+- **iOS**: Full SDK available with demo application (see `ios/` directory)
+- **Android**: Coming soon (see `android/` directory)
 
 ## Overview
 
-This SDK provides a complete interface for iOS developers to integrate HeyCyan smart glasses functionality into their applications. The glasses support photo capture, video recording, audio recording, and AI-powered image generation.
+This repository provides SDKs for developers to integrate HeyCyan smart glasses functionality into their applications. The glasses support photo capture, video recording, audio recording, and AI-powered image generation.
 
 ## Features
 
@@ -27,20 +32,22 @@ This SDK provides a complete interface for iOS developers to integrate HeyCyan s
 ## Project Structure
 
 ```
-HeyCyanGlassesSDK-IOS/
-├── QCSDK.framework/          # Core SDK framework
-│   ├── Headers/              # Public SDK headers
-│   │   ├── QCSDK.h          # Main SDK header
-│   │   ├── QCSDKManager.h   # Device management
-│   │   ├── QCSDKCmdCreator.h # Command creation utilities
-│   │   └── ...
-│   └── Info.plist
-├── QCSDKDemo/               # Demo application
-│   ├── AppDelegate.*        # App lifecycle
-│   ├── ViewController.*     # Main features demo
-│   ├── QCScanViewController.* # Device scanning
-│   └── QCCentralManager.*   # BLE connection management
-└── QCSDKDemo.xcodeproj      # Xcode project file
+HeyCyanGlassesSDK/
+├── ios/                      # iOS SDK
+│   ├── QCSDK.framework/      # Core SDK framework
+│   │   ├── Headers/          # Public SDK headers
+│   │   │   ├── QCSDK.h      # Main SDK header
+│   │   │   ├── QCSDKManager.h # Device management
+│   │   │   ├── QCSDKCmdCreator.h # Command creation utilities
+│   │   │   └── ...
+│   │   └── Info.plist
+│   ├── QCSDKDemo/           # Demo application
+│   │   ├── AppDelegate.*    # App lifecycle
+│   │   ├── ViewController.* # Main features demo
+│   │   ├── QCScanViewController.* # Device scanning
+│   │   └── QCCentralManager.* # BLE connection management
+│   └── QCSDKDemo.xcodeproj  # Xcode project file
+└── android/                  # Android SDK (Coming Soon)
 ```
 
 ## Requirements
