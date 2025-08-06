@@ -89,4 +89,8 @@ iOSInjectionProject/
 .AppleDesktop
 Network Trash Folder
 Temporary Items
-.apdisk/rust/
+.apdisk
+
+# Custom ignores
+/rust/
+/python/
