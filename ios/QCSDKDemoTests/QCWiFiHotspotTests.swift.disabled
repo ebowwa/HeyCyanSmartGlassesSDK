@@ -1,0 +1,368 @@
+//
+//  QCWiFiHotspotTests.swift
+//  QCSDKDemoTests
+//
+//  Tests for HeyCyan glasses WiFi hotspot setup and connection
+//
+
+import Testing
+import Foundation
+import CoreBluetooth
+import NetworkExtension
+
+/// Tests for HeyCyan glasses WiFi hotspot functionality
+///
+/// PREREQUISITES:
+/// - HeyCyan glasses (M01_9FD8) must be connected via Bluetooth
+/// - Device must have WiFi enabled
+/// - App must have hotspot configuration permission
+///
+/// TEST FLOW:
+/// 1. Verify glasses are connected via Bluetooth
+/// 2. Open WiFi hotspot on glasses
+/// 3. Get SSID and password
+/// 4. Connect iPhone to glasses hotspot
+/// 5. Get IP address of glasses
+/// 6. Test data transfer capabilities
+struct QCWiFiHotspotTests {
+    
+    // MARK: - Properties
+    
+    /// Stores WiFi credentials received from glasses
+    struct WiFiCredentials {
+        let ssid: String
+        let password: String
+        var ipAddress: String?
+    }
+    
+    // MARK: - Helper Functions
+    
+    /// Verify glasses are connected before WiFi tests
+    private func verifyGlassesConnected() -> Bool {
+        let manager = QCCentralManager.shared()
+        return manager.connectedPeripheral != nil && manager.deviceState == .connected
+    }
+    
+    // MARK: - WiFi Hotspot Tests
+    
+    /// Test opening WiFi hotspot on glasses
+    @Test func testOpenWiFiHotspot() async throws {
+        // Verify glasses are connected
+        #expect(verifyGlassesConnected(), "Glasses must be connected to test WiFi hotspot")
+        
+        let expectation = WiFiTestExpectation()
+        var credentials: WiFiCredentials?
+        
+        // Open WiFi hotspot with Transfer mode (for media transfer)
+        QCSDKCmdCreator.openWifi(with: .transfer, success: { ssid, password in
+            print("✅ WiFi Hotspot opened successfully!")
+            print("   SSID: \(ssid)")
+            print("   Password: \(password)")
+            
+            credentials = WiFiCredentials(ssid: ssid, password: password)
+            expectation.fulfill()
+        }, fail: { errorCode in
+            print("❌ Failed to open WiFi hotspot: \(errorCode)")
+            expectation.fulfill()
+        })
+        
+        // Wait for hotspot to open (max 10 seconds)
+        await expectation.wait(timeout: 10)
+        
+        #expect(credentials != nil, "Should receive WiFi credentials")
+        
+        if let creds = credentials {
+            #expect(!creds.ssid.isEmpty, "SSID should not be empty")
+            #expect(!creds.password.isEmpty, "Password should not be empty")
+            
+            // Typically SSID format: "M01_XXXX" or similar
+            #expect(creds.ssid.contains("M01") || creds.ssid.contains("9FD8"), 
+                    "SSID should contain device identifier")
+        }
+    }
+    
+    /// Test getting WiFi IP address from glasses
+    @Test func testGetWiFiIPAddress() async throws {
+        // Verify glasses are connected
+        #expect(verifyGlassesConnected(), "Glasses must be connected to test WiFi")
+        
+        // First open WiFi hotspot
+        let openExpectation = WiFiTestExpectation()
+        var credentials: WiFiCredentials?
+        
+        QCSDKCmdCreator.openWifi(with: .transfer, success: { ssid, password in
+            credentials = WiFiCredentials(ssid: ssid, password: password)
+            openExpectation.fulfill()
+        }, fail: { _ in
+            openExpectation.fulfill()
+        })
+        
+        await openExpectation.wait(timeout: 10)
+        #expect(credentials != nil, "WiFi hotspot should be opened first")
+        
+        // Wait a moment for WiFi to stabilize
+        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+        
+        // Get IP address
+        let ipExpectation = WiFiTestExpectation()
+        var receivedIP: String?
+        
+        QCSDKCmdCreator.getDeviceWifiIPSuccess({ ipAddress in
+            if let ip = ipAddress {
+                print("✅ WiFi IP Address: \(ip)")
+                receivedIP = ip
+            }
+            ipExpectation.fulfill()
+        }, failed: {
+            print("❌ Failed to get WiFi IP address")
+            ipExpectation.fulfill()
+        })
+        
+        await ipExpectation.wait(timeout: 5)
+        
+        if let ip = receivedIP {
+            #expect(!ip.isEmpty, "IP address should not be empty")
+            
+            // Validate IP format (basic check)
+            let ipComponents = ip.split(separator: ".")
+            #expect(ipComponents.count == 4, "IP should have 4 octets")
+            
+            // Typically glasses use 192.168.x.x range
+            #expect(ip.hasPrefix("192.168") || ip.hasPrefix("10."), 
+                    "IP should be in private network range")
+        }
+    }
+    
+    /// Test connecting iPhone to glasses WiFi hotspot
+    @Test func testConnectToGlassesHotspot() async throws {
+        // Verify glasses are connected
+        #expect(verifyGlassesConnected(), "Glasses must be connected to test WiFi")
+        
+        // Open WiFi hotspot
+        let openExpectation = WiFiTestExpectation()
+        var credentials: WiFiCredentials?
+        
+        QCSDKCmdCreator.openWifi(with: .transfer, success: { ssid, password in
+            credentials = WiFiCredentials(ssid: ssid, password: password)
+            openExpectation.fulfill()
+        }, fail: { _ in
+            openExpectation.fulfill()
+        })
+        
+        await openExpectation.wait(timeout: 10)
+        
+        guard let creds = credentials else {
+            #expect(false, "Failed to get WiFi credentials")
+            return
+        }
+        
+        print("📱 Attempting to connect iPhone to glasses hotspot...")
+        print("   SSID: \(creds.ssid)")
+        
+        // Use WiFiAutoConnect helper to connect
+        let connectExpectation = WiFiTestExpectation()
+        var connectionSuccess = false
+        
+        WiFiAutoConnect.connect(toWiFiWithSSID: creds.ssid, password: creds.password, completion: { success, error in
+            if success {
+                print("✅ Successfully connected to glasses WiFi!")
+                connectionSuccess = true
+            } else {
+                print("❌ Failed to connect: \(error?.localizedDescription ?? "Unknown error")")
+            }
+            connectExpectation.fulfill()
+        })
+        
+        await connectExpectation.wait(timeout: 15)
+        
+        #expect(connectionSuccess, "Should successfully connect to glasses WiFi hotspot")
+        
+        // Clean up - remove WiFi configuration after test
+        if connectionSuccess {
+            WiFiAutoConnect.disconnect(fromWiFiWithSSID: creds.ssid)
+            print("🧹 Cleaned up WiFi configuration")
+        }
+    }
+    
+    /// Test different WiFi modes
+    @Test func testWiFiModes() async throws {
+        // Verify glasses are connected
+        #expect(verifyGlassesConnected(), "Glasses must be connected to test WiFi modes")
+        
+        // Test available modes: transfer, OTA, photo
+        let modes: [QCOperatorDeviceMode] = [.transfer, .OTA, .photo]
+        
+        for mode in modes {
+            print("\n🔄 Testing WiFi mode: \(mode.rawValue)")
+            
+            let expectation = WiFiTestExpectation()
+            var success = false
+            
+            QCSDKCmdCreator.openWifi(with: mode, success: { ssid, password in
+                print("   ✅ Mode \(mode.rawValue) opened successfully")
+                print("   SSID: \(ssid)")
+                success = true
+                expectation.fulfill()
+            }, fail: { errorCode in
+                print("   ❌ Mode \(mode.rawValue) failed: \(errorCode)")
+                expectation.fulfill()
+            })
+            
+            await expectation.wait(timeout: 10)
+            
+            // Some modes might not be supported
+            if success {
+                print("   Mode \(mode.rawValue) is supported")
+            }
+            
+            // Brief pause between mode tests
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        }
+    }
+    
+    /// Test complete WiFi flow: open hotspot → connect → get IP → disconnect
+    @Test func testCompleteWiFiFlow() async throws {
+        print("\n🚀 Starting complete WiFi flow test...\n")
+        
+        // Step 1: Verify Bluetooth connection
+        #expect(verifyGlassesConnected(), "Glasses must be connected")
+        print("✅ Step 1: Glasses connected via Bluetooth")
+        
+        // Step 2: Open WiFi hotspot
+        let openExpectation = WiFiTestExpectation()
+        var credentials: WiFiCredentials?
+        
+        QCSDKCmdCreator.openWifi(with: .transfer, success: { ssid, password in
+            credentials = WiFiCredentials(ssid: ssid, password: password)
+            openExpectation.fulfill()
+        }, fail: { errorCode in
+            print("Failed with error: \(errorCode)")
+            openExpectation.fulfill()
+        })
+        
+        await openExpectation.wait(timeout: 10)
+        
+        guard var creds = credentials else {
+            #expect(false, "Failed to open WiFi hotspot")
+            return
+        }
+        
+        print("✅ Step 2: WiFi hotspot opened")
+        print("   SSID: \(creds.ssid)")
+        print("   Password: \(creds.password)")
+        
+        // Step 3: Connect iPhone to hotspot
+        let connectExpectation = WiFiTestExpectation()
+        var connected = false
+        
+        WiFiAutoConnect.connect(toWiFiWithSSID: creds.ssid, password: creds.password) { success, error in
+            connected = success
+            connectExpectation.fulfill()
+        }
+        
+        await connectExpectation.wait(timeout: 15)
+        
+        if connected {
+            print("✅ Step 3: iPhone connected to glasses WiFi")
+        } else {
+            print("⚠️ Step 3: Could not auto-connect (may require manual connection)")
+        }
+        
+        // Step 4: Get IP address
+        let ipExpectation = WiFiTestExpectation()
+        
+        QCSDKCmdCreator.getDeviceWifiIPSuccess({ ipAddress in
+            if let ip = ipAddress {
+                creds.ipAddress = ip
+                print("✅ Step 4: Got IP address: \(ip)")
+            }
+            ipExpectation.fulfill()
+        }, failed: {
+            ipExpectation.fulfill()
+        })
+        
+        await ipExpectation.wait(timeout: 5)
+        
+        // Step 5: Clean up
+        if connected {
+            WiFiAutoConnect.disconnect(fromWiFiWithSSID: creds.ssid)
+            print("✅ Step 5: Disconnected and cleaned up")
+        }
+        
+        print("\n🎉 Complete WiFi flow test finished!")
+        
+        // Verify we got all the data
+        #expect(creds.ssid.count > 0, "Should have SSID")
+        #expect(creds.password.count > 0, "Should have password")
+        
+        if let ip = creds.ipAddress {
+            print("\n📊 Summary:")
+            print("   - SSID: \(creds.ssid)")
+            print("   - Password: \(creds.password)")
+            print("   - IP: \(ip)")
+            print("   - Ready for media transfer!")
+        }
+    }
+    
+    /// Test WiFi stability by opening and checking multiple times
+    @Test func testWiFiStability() async throws {
+        #expect(verifyGlassesConnected(), "Glasses must be connected")
+        
+        let iterations = 3
+        var successCount = 0
+        
+        for i in 1...iterations {
+            print("\n🔄 WiFi stability test iteration \(i)/\(iterations)")
+            
+            let expectation = WiFiTestExpectation()
+            
+            QCSDKCmdCreator.openWifi(with: .transfer, success: { ssid, password in
+                print("   ✅ Iteration \(i) successful")
+                successCount += 1
+                expectation.fulfill()
+            }, fail: { errorCode in
+                print("   ❌ Iteration \(i) failed: \(errorCode)")
+                expectation.fulfill()
+            })
+            
+            await expectation.wait(timeout: 10)
+            
+            // Wait between iterations
+            if i < iterations {
+                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            }
+        }
+        
+        print("\n📊 Stability test results: \(successCount)/\(iterations) successful")
+        #expect(successCount > 0, "At least one WiFi open should succeed")
+    }
+}
+
+// MARK: - Test Support
+
+/// Simple test expectation for async coordination
+class WiFiTestExpectation {
+    private var fulfilled = false
+    private let lock = NSLock()
+    
+    func fulfill() {
+        lock.lock()
+        fulfilled = true
+        lock.unlock()
+    }
+    
+    func wait(timeout: TimeInterval) async {
+        let deadline = Date().addingTimeInterval(timeout)
+        
+        while Date() < deadline {
+            lock.lock()
+            if fulfilled {
+                lock.unlock()
+                return
+            }
+            lock.unlock()
+            
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        }
+    }
+}

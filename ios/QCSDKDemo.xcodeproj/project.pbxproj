@@ -7,18 +7,55 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		761E4C602E4D77F300641638 /* QCAudioHAL.m in Sources */ = {isa = PBXBuildFile; fileRef = 761E4C5F2E4D77F300641638 /* QCAudioHAL.m */; };
+		7653B0742E4D2ED80062E860 /* WiFiMediaBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B0732E4D2ED80062E860 /* WiFiMediaBrowser.m */; };
+		7653B0782E4D2EEA0062E860 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B0772E4D2EEA0062E860 /* ViewController.m */; };
+		7653B0C52E4D53830062E860 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7653B0C42E4D53830062E860 /* QCSDK.framework */; };
+		7653B0C62E4D53830062E860 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7653B0C42E4D53830062E860 /* QCSDK.framework */; };
+		7653B1202E4D660B0062E860 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7653B11D2E4D660B0062E860 /* README.md */; };
+		7653B1222E4D660B0062E860 /* QCBluetoothKit.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 7653B11C2E4D660B0062E860 /* QCBluetoothKit.xcconfig */; };
+		7653B1232E4D660B0062E860 /* QCCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B1172E4D660B0062E860 /* QCCentralManager.m */; };
+		7653B1242E4D660B0062E860 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7653B11D2E4D660B0062E860 /* README.md */; };
+		7653B1262E4D660B0062E860 /* QCBluetoothKit.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 7653B11C2E4D660B0062E860 /* QCBluetoothKit.xcconfig */; };
+		7653B1272E4D660B0062E860 /* QCCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B1172E4D660B0062E860 /* QCCentralManager.m */; };
+		7653B1312E4D67360062E860 /* WiFiAutoConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B12B2E4D67360062E860 /* WiFiAutoConnect.m */; };
+		7653B1322E4D67360062E860 /* NetworkExplorer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B1292E4D67360062E860 /* NetworkExplorer.m */; };
+		7653B1332E4D67360062E860 /* QCNetworkKit.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 7653B12F2E4D67360062E860 /* QCNetworkKit.xcconfig */; };
+		7653B1342E4D67360062E860 /* QCNetworkKit.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 7653B12F2E4D67360062E860 /* QCNetworkKit.xcconfig */; };
+		7653B1352E4D67360062E860 /* WiFiAutoConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B12B2E4D67360062E860 /* WiFiAutoConnect.m */; };
+		7653B1362E4D67360062E860 /* NetworkExplorer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7653B1292E4D67360062E860 /* NetworkExplorer.m */; };
 		AA1313852E2F904500B03938 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313782E2F904500B03938 /* AppDelegate.m */; };
 		AA1313862E2F904500B03938 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA13137D2E2F904500B03938 /* main.m */; };
 		AA1313882E2F904500B03938 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313832E2F904500B03938 /* ViewController.m */; };
 		AA1313892E2F904500B03938 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1313792E2F904500B03938 /* Assets.xcassets */; };
 		AA13138B2E2F904500B03938 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA13137C2E2F904500B03938 /* LaunchScreen.storyboard */; };
-		AA1313BC2E2F9E9800B03938 /* QCCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */; };
 		AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */; };
 		AA13172A2E31290900B03938 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; };
 		AA13172B2E31290900B03938 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AA13172C2E31290910B03938 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		7653B0A32E4D487D0062E860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA13134F2E2F903500B03938 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA1313562E2F903500B03938;
+			remoteInfo = QCSDKDemo;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		7653B0942E4D400D0062E860 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA13172C2E31290A00B03938 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +70,33 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		761E4C5F2E4D77F300641638 /* QCAudioHAL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCAudioHAL.m; sourceTree = "<group>"; };
+		761E4C612E4D780D00641638 /* QCAudioHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCAudioHAL.h; sourceTree = "<group>"; };
+		7653B0732E4D2ED80062E860 /* WiFiMediaBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WiFiMediaBrowser.m; sourceTree = "<group>"; };
+		7653B0752E4D2EE40062E860 /* WiFiMediaBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WiFiMediaBrowser.h; sourceTree = "<group>"; };
+		7653B0762E4D2EEA0062E860 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		7653B0772E4D2EEA0062E860 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		7653B07C2E4D34CD0062E860 /* QCSDKDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QCSDKDemo.entitlements; sourceTree = "<group>"; };
+		7653B09F2E4D487D0062E860 /* QCSDKDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QCSDKDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7653B0C42E4D53830062E860 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = "<group>"; };
+		7653B1162E4D660B0062E860 /* QCCentralManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCCentralManager.h; sourceTree = "<group>"; };
+		7653B1172E4D660B0062E860 /* QCCentralManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCCentralManager.m; sourceTree = "<group>"; };
+		7653B11A2E4D660B0062E860 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		7653B11B2E4D660B0062E860 /* QCBluetoothKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCBluetoothKit.h; sourceTree = "<group>"; };
+		7653B11C2E4D660B0062E860 /* QCBluetoothKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = QCBluetoothKit.xcconfig; sourceTree = "<group>"; };
+		7653B11D2E4D660B0062E860 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		7653B1282E4D67360062E860 /* NetworkExplorer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkExplorer.h; sourceTree = "<group>"; };
+		7653B1292E4D67360062E860 /* NetworkExplorer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkExplorer.m; sourceTree = "<group>"; };
+		7653B12A2E4D67360062E860 /* WiFiAutoConnect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WiFiAutoConnect.h; sourceTree = "<group>"; };
+		7653B12B2E4D67360062E860 /* WiFiAutoConnect.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WiFiAutoConnect.m; sourceTree = "<group>"; };
+		7653B12D2E4D67360062E860 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		7653B12E2E4D67360062E860 /* QCNetworkKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCNetworkKit.h; sourceTree = "<group>"; };
+		7653B12F2E4D67360062E860 /* QCNetworkKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = QCNetworkKit.xcconfig; sourceTree = "<group>"; };
+		7653B16A2E4D70E80062E860 /* QCBatteryHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCBatteryHAL.h; sourceTree = "<group>"; };
+		7653B16C2E4D70E80062E860 /* QCCameraHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCCameraHAL.h; sourceTree = "<group>"; };
+		7653B16E2E4D70E80062E860 /* QCDisplayHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCDisplayHAL.h; sourceTree = "<group>"; };
+		7653B1702E4D70E80062E860 /* QCSensorsHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCSensorsHAL.h; sourceTree = "<group>"; };
+		7653B1722E4D70E80062E860 /* QCStorageHAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCStorageHAL.h; sourceTree = "<group>"; };
 		AA1313572E2F903500B03938 /* QCSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QCSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA1313772E2F904500B03938 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		AA1313782E2F904500B03938 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -43,29 +107,161 @@
 		AA1313822E2F904500B03938 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		AA1313832E2F904500B03938 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		AA13138E2E2F915600B03938 /* QCSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QCSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCCentralManager.h; sourceTree = "<group>"; };
-		AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCCentralManager.m; sourceTree = "<group>"; };
 		AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCScanViewController.h; sourceTree = "<group>"; };
 		AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCScanViewController.m; sourceTree = "<group>"; };
 		AA1317282E3128F300B03938 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		7653B0A02E4D487D0062E860 /* QCSDKDemoTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QCSDKDemoTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		7653B09C2E4D487D0062E860 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA13172C2E31290910B03938 /* QCSDK.framework in Frameworks */,
+				7653B0C62E4D53830062E860 /* QCSDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA1313542E2F903500B03938 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AA13172A2E31290900B03938 /* QCSDK.framework in Frameworks */,
+				7653B0C52E4D53830062E860 /* QCSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7653B1182E4D660B0062E860 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1162E4D660B0062E860 /* QCCentralManager.h */,
+				7653B1172E4D660B0062E860 /* QCCentralManager.m */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		7653B11E2E4D660B0062E860 /* QCBluetoothKit */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1182E4D660B0062E860 /* Sources */,
+				7653B11A2E4D660B0062E860 /* module.modulemap */,
+				7653B11B2E4D660B0062E860 /* QCBluetoothKit.h */,
+				7653B11C2E4D660B0062E860 /* QCBluetoothKit.xcconfig */,
+				7653B11D2E4D660B0062E860 /* README.md */,
+			);
+			path = QCBluetoothKit;
+			sourceTree = "<group>";
+		};
+		7653B11F2E4D660B0062E860 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1752E4D70E80062E860 /* HAL */,
+				7653B11E2E4D660B0062E860 /* QCBluetoothKit */,
+				7653B1302E4D67360062E860 /* QCNetworkKit */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		7653B12C2E4D67360062E860 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1282E4D67360062E860 /* NetworkExplorer.h */,
+				7653B1292E4D67360062E860 /* NetworkExplorer.m */,
+				7653B12A2E4D67360062E860 /* WiFiAutoConnect.h */,
+				7653B12B2E4D67360062E860 /* WiFiAutoConnect.m */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		7653B1302E4D67360062E860 /* QCNetworkKit */ = {
+			isa = PBXGroup;
+			children = (
+				7653B12C2E4D67360062E860 /* Sources */,
+				7653B12D2E4D67360062E860 /* module.modulemap */,
+				7653B12E2E4D67360062E860 /* QCNetworkKit.h */,
+				7653B12F2E4D67360062E860 /* QCNetworkKit.xcconfig */,
+			);
+			path = QCNetworkKit;
+			sourceTree = "<group>";
+		};
+		7653B1692E4D70E80062E860 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				761E4C5F2E4D77F300641638 /* QCAudioHAL.m */,
+				761E4C612E4D780D00641638 /* QCAudioHAL.h */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		7653B16B2E4D70E80062E860 /* Battery */ = {
+			isa = PBXGroup;
+			children = (
+				7653B16A2E4D70E80062E860 /* QCBatteryHAL.h */,
+			);
+			path = Battery;
+			sourceTree = "<group>";
+		};
+		7653B16D2E4D70E80062E860 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				7653B16C2E4D70E80062E860 /* QCCameraHAL.h */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		7653B16F2E4D70E80062E860 /* Display */ = {
+			isa = PBXGroup;
+			children = (
+				7653B16E2E4D70E80062E860 /* QCDisplayHAL.h */,
+			);
+			path = Display;
+			sourceTree = "<group>";
+		};
+		7653B1712E4D70E80062E860 /* Sensors */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1702E4D70E80062E860 /* QCSensorsHAL.h */,
+			);
+			path = Sensors;
+			sourceTree = "<group>";
+		};
+		7653B1732E4D70E80062E860 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1722E4D70E80062E860 /* QCStorageHAL.h */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		7653B1752E4D70E80062E860 /* HAL */ = {
+			isa = PBXGroup;
+			children = (
+				7653B1692E4D70E80062E860 /* Audio */,
+				7653B16B2E4D70E80062E860 /* Battery */,
+				7653B16D2E4D70E80062E860 /* Camera */,
+				7653B16F2E4D70E80062E860 /* Display */,
+				7653B1712E4D70E80062E860 /* Sensors */,
+				7653B1732E4D70E80062E860 /* Storage */,
+			);
+			path = HAL;
+			sourceTree = "<group>";
+		};
 		AA13134E2E2F903500B03938 = {
 			isa = PBXGroup;
 			children = (
 				AA1313842E2F904500B03938 /* QCSDKDemo */,
+				7653B0A02E4D487D0062E860 /* QCSDKDemoTests */,
 				AA13138D2E2F915600B03938 /* Frameworks */,
 				AA1313582E2F903500B03938 /* Products */,
 			);
@@ -75,6 +271,7 @@
 			isa = PBXGroup;
 			children = (
 				AA1313572E2F903500B03938 /* QCSDKDemo.app */,
+				7653B09F2E4D487D0062E860 /* QCSDKDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -82,19 +279,23 @@
 		AA1313842E2F904500B03938 /* QCSDKDemo */ = {
 			isa = PBXGroup;
 			children = (
+				7653B07C2E4D34CD0062E860 /* QCSDKDemo.entitlements */,
 				AA1317282E3128F300B03938 /* QCSDK.framework */,
 				AA1313772E2F904500B03938 /* AppDelegate.h */,
 				AA1313782E2F904500B03938 /* AppDelegate.m */,
 				AA1313822E2F904500B03938 /* ViewController.h */,
+				7653B0732E4D2ED80062E860 /* WiFiMediaBrowser.m */,
 				AA1313832E2F904500B03938 /* ViewController.m */,
-				AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */,
-				AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */,
+				7653B0752E4D2EE40062E860 /* WiFiMediaBrowser.h */,
+				7653B0762E4D2EEA0062E860 /* ViewController.h */,
+				7653B0772E4D2EEA0062E860 /* ViewController.m */,
 				AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */,
 				AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */,
 				AA1313792E2F904500B03938 /* Assets.xcassets */,
 				AA13137A2E2F904500B03938 /* Info.plist */,
 				AA13137C2E2F904500B03938 /* LaunchScreen.storyboard */,
 				AA13137D2E2F904500B03938 /* main.m */,
+				7653B11F2E4D660B0062E860 /* Modules */,
 			);
 			path = QCSDKDemo;
 			sourceTree = "<group>";
@@ -102,6 +303,7 @@
 		AA13138D2E2F915600B03938 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7653B0C42E4D53830062E860 /* QCSDK.framework */,
 				AA13138E2E2F915600B03938 /* QCSDK.framework */,
 			);
 			name = Frameworks;
@@ -110,6 +312,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7653B09E2E4D487D0062E860 /* QCSDKDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7653B0A52E4D487D0062E860 /* Build configuration list for PBXNativeTarget "QCSDKDemoTests" */;
+			buildPhases = (
+				7653B09B2E4D487D0062E860 /* Sources */,
+				7653B09C2E4D487D0062E860 /* Frameworks */,
+				7653B09D2E4D487D0062E860 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7653B0A42E4D487D0062E860 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7653B0A02E4D487D0062E860 /* QCSDKDemoTests */,
+			);
+			name = QCSDKDemoTests;
+			packageProductDependencies = (
+			);
+			productName = QCSDKDemoTests;
+			productReference = 7653B09F2E4D487D0062E860 /* QCSDKDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		AA1313562E2F903500B03938 /* QCSDKDemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA13136F2E2F903600B03938 /* Build configuration list for PBXNativeTarget "QCSDKDemo" */;
@@ -118,6 +343,7 @@
 				AA1313542E2F903500B03938 /* Frameworks */,
 				AA1313552E2F903500B03938 /* Resources */,
 				AA13172C2E31290A00B03938 /* Embed Frameworks */,
+				7653B0942E4D400D0062E860 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
@@ -137,8 +363,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					7653B09E2E4D487D0062E860 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = AA1313562E2F903500B03938;
+					};
 					AA1313562E2F903500B03938 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -159,29 +390,58 @@
 			projectRoot = "";
 			targets = (
 				AA1313562E2F903500B03938 /* QCSDKDemo */,
+				7653B09E2E4D487D0062E860 /* QCSDKDemoTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7653B09D2E4D487D0062E860 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7653B1242E4D660B0062E860 /* README.md in Resources */,
+				7653B1262E4D660B0062E860 /* QCBluetoothKit.xcconfig in Resources */,
+				7653B1342E4D67360062E860 /* QCNetworkKit.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA1313552E2F903500B03938 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7653B1332E4D67360062E860 /* QCNetworkKit.xcconfig in Resources */,
 				AA1313892E2F904500B03938 /* Assets.xcassets in Resources */,
 				AA13138B2E2F904500B03938 /* LaunchScreen.storyboard in Resources */,
+				7653B1202E4D660B0062E860 /* README.md in Resources */,
+				7653B1222E4D660B0062E860 /* QCBluetoothKit.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7653B09B2E4D487D0062E860 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7653B1352E4D67360062E860 /* WiFiAutoConnect.m in Sources */,
+				7653B1362E4D67360062E860 /* NetworkExplorer.m in Sources */,
+				7653B1272E4D660B0062E860 /* QCCentralManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA1313532E2F903500B03938 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7653B0782E4D2EEA0062E860 /* ViewController.m in Sources */,
 				AA1313852E2F904500B03938 /* AppDelegate.m in Sources */,
-				AA1313BC2E2F9E9800B03938 /* QCCentralManager.m in Sources */,
+				7653B1232E4D660B0062E860 /* QCCentralManager.m in Sources */,
+				7653B0742E4D2ED80062E860 /* WiFiMediaBrowser.m in Sources */,
+				761E4C602E4D77F300641638 /* QCAudioHAL.m in Sources */,
+				7653B1312E4D67360062E860 /* WiFiAutoConnect.m in Sources */,
+				7653B1322E4D67360062E860 /* NetworkExplorer.m in Sources */,
 				AA1313862E2F904500B03938 /* main.m in Sources */,
 				AA1313882E2F904500B03938 /* ViewController.m in Sources */,
 				AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */,
@@ -189,6 +449,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7653B0A42E4D487D0062E860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA1313562E2F903500B03938 /* QCSDKDemo */;
+			targetProxy = 7653B0A32E4D487D0062E860 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		AA13137C2E2F904500B03938 /* LaunchScreen.storyboard */ = {
@@ -202,11 +470,63 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		7653B0A62E4D487D0062E860 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.QCSDKDemo.QCSDKDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "QCSDKDemoTests/QCSDKDemoTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/QCSDKDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/QCSDKDemo";
+			};
+			name = Debug;
+		};
+		7653B0A72E4D487D0062E860 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.QCSDKDemo.QCSDKDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "QCSDKDemoTests/QCSDKDemoTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/QCSDKDemo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/QCSDKDemo";
+			};
+			name = Release;
+		};
 		AA1313702E2F903600B03938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = QCSDKDemo/QCSDKDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42R8ZPM5N8;
@@ -218,6 +538,9 @@
 				INFOPLIST_FILE = QCSDKDemo/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "App needs to use your bluetooth device";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "App needs to use your bluetooth device";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs to access the glasses' WiFi network to transfer media files";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app needs to save photos and videos from your glasses to your Photos library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -229,7 +552,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.qcwx.dev.QCSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.QCSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -241,6 +564,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = QCSDKDemo/QCSDKDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42R8ZPM5N8;
@@ -252,6 +576,9 @@
 				INFOPLIST_FILE = QCSDKDemo/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "App needs to use your bluetooth device";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "App needs to use your bluetooth device";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs to access the glasses' WiFi network to transfer media files";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app needs to save photos and videos from your glasses to your Photos library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -263,7 +590,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.qcwx.dev.QCSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.QCSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -389,6 +716,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7653B0A52E4D487D0062E860 /* Build configuration list for PBXNativeTarget "QCSDKDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7653B0A62E4D487D0062E860 /* Debug */,
+				7653B0A72E4D487D0062E860 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AA1313522E2F903500B03938 /* Build configuration list for PBXProject "QCSDKDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

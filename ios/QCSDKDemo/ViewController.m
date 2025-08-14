@@ -12,6 +12,9 @@
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
+#import "WiFiMediaBrowser.h"
+#import "WiFiAutoConnect.h"
+#import "Modules/HAL/Audio/QCAudioHAL.h"
 
 typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     /// Get hardware version, firmware version, and WiFi firmware versions
@@ -37,6 +40,21 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     
     /// Take AI Image
     QGDeviceActionTypeToggleTakeAIImage,
+    
+    /// Open WiFi Hotspot and Start Transfer Mode
+    QGDeviceActionTypeOpenWiFi,
+    
+    /// Get WiFi IP Address
+    QGDeviceActionTypeGetWiFiIP,
+    
+    /// Delete All Media Files
+    QGDeviceActionTypeDeleteAllMedia,
+    
+    /// Browse Media Files
+    QGDeviceActionTypeBrowseMedia,
+    
+    /// Play Last Recorded Audio
+    QGDeviceActionTypePlayRecordedAudio,
 
     /// Reserved for future use
     QGDeviceActionTypeReserved,
@@ -44,7 +62,7 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 
 
 
-@interface ViewController ()<UITableViewDelegate, UITableViewDataSource,QCCentralManagerDelegate,QCSDKManagerDelegate>
+@interface ViewController ()<UITableViewDelegate, UITableViewDataSource,QCCentralManagerDelegate,QCSDKManagerDelegate,QCMicrophoneHALDelegate,QCSpeakerHALDelegate>
 
 @property(nonatomic,strong)UIBarButtonItem *rightItem;
 @property(nonatomic,strong)UITableView *tableView;
@@ -65,8 +83,15 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 
 @property(nonatomic,assign)BOOL recordingVideo;
 @property(nonatomic,assign)BOOL recordingAudio;
+@property(nonatomic,strong)NSURL *lastRecordedAudioURL;
+@property(nonatomic,assign)BOOL playingAudio;
 
 @property(nonatomic,strong)NSData *aiImageData;
+
+@property(nonatomic,copy)NSString *wifiSSID;
+@property(nonatomic,copy)NSString *wifiPassword;
+@property(nonatomic,copy)NSString *wifiIPAddress;
+@property(nonatomic,assign)BOOL isTransferMode;
 @end
 
 @implementation ViewController
@@ -207,20 +232,64 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 }
 
 - (void)recordAudio {
-    if (self.recordingVideo) {
+    // Using the new Audio HAL
+    QCAudioHAL *audioHAL = [QCAudioHAL sharedInstance];
+    QCMicrophoneHAL *microphone = audioHAL.microphone;
+    microphone.delegate = self;
+    
+    if (self.recordingAudio) {
+        // Stop recording using HAL
+        [microphone stopRecording];
+        self.recordingAudio = NO;
+        [self.tableView reloadData];
+        
+        // Also send command to glasses to stop
         [QCSDKCmdCreator setDeviceMode:(QCOperatorDeviceModeAudioStop) success:^{
-            self.recordingAudio = NO;
-            [self.tableView reloadData];
+            NSLog(@"Audio recording stopped on glasses");
         } fail:^(NSInteger mode) {
-            NSLog(@"set fail,current device model:%zd",mode);
+            NSLog(@"Failed to stop audio on glasses, current device model:%zd",mode);
         }];
     } else {
+        // Initialize and start recording using HAL
+        [microphone initializeMicrophone];
+        [microphone startRecording];
+        self.recordingAudio = YES;
+        [self.tableView reloadData];
+        
+        // Also send command to glasses to start
         [QCSDKCmdCreator setDeviceMode:(QCOperatorDeviceModeAudio) success:^{
-            self.recordingAudio = YES;
-            [self.tableView reloadData];
+            NSLog(@"Audio recording started on glasses");
         } fail:^(NSInteger mode) {
-            NSLog(@"set fail,current device model:%zd",mode);
+            NSLog(@"Failed to start audio on glasses, current device model:%zd",mode);
         }];
+    }
+}
+
+- (void)playRecordedAudio {
+    if (!self.lastRecordedAudioURL) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"No Recording"
+                                                                     message:@"Please record audio first"
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    
+    QCAudioHAL *audioHAL = [QCAudioHAL sharedInstance];
+    QCSpeakerHAL *speaker = audioHAL.speaker;
+    speaker.delegate = self;
+    
+    if (self.playingAudio) {
+        // Stop playback
+        [speaker stopPlayback];
+        self.playingAudio = NO;
+        [self.tableView reloadData];
+    } else {
+        // Start playback
+        [speaker initializeSpeaker];
+        [speaker playAudioFromURL:self.lastRecordedAudioURL];
+        self.playingAudio = YES;
+        [self.tableView reloadData];
     }
 }
 
@@ -232,6 +301,213 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         NSLog(@"set fail,current device model:%zd",mode);
     }];
 }
+
+- (void)openWifiTransferMode {
+    // Alias for openWiFiHotspot for clarity
+    [self openWiFiHotspot];
+}
+
+- (void)openWiFiHotspot {
+    NSLog(@"Opening WiFi Hotspot...");
+    [QCSDKCmdCreator openWifiWithMode:QCOperatorDeviceModeTransfer success:^(NSString *ssid, NSString *password) {
+        NSLog(@"WiFi Hotspot Opened Successfully!");
+        NSLog(@"SSID: %@", ssid);
+        NSLog(@"Password: %@", password);
+        
+        self.wifiSSID = ssid;
+        self.wifiPassword = password;
+        
+        // Automatically get IP address after WiFi opens
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self getWiFiIPAddress];
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+            
+            // Just auto-connect immediately like the official app
+            [WiFiAutoConnect connectToWiFiWithSSID:ssid password:password completion:^(BOOL success, NSError * _Nullable error) {
+                if (success || error.code == 13) { // Code 13 = already connected
+                    NSLog(@"WiFi connection successful or already connected");
+                    
+                    // Wait for connection to establish then open browser
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        WiFiMediaBrowser *browser = [[WiFiMediaBrowser alloc] init];
+                        browser.deviceIPAddress = self.wifiIPAddress;
+                        browser.wifiSSID = self.wifiSSID;
+                        browser.wifiPassword = self.wifiPassword;
+                        [self.navigationController pushViewController:browser animated:YES];
+                    });
+                } else {
+                    NSLog(@"WiFi connection failed: %@", error.localizedDescription);
+                    
+                    // Simple fallback alert
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Connection Required"
+                                                                                 message:@"Please connect to the glasses WiFi network"
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+                    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
+            }];
+        });
+    } fail:^(NSInteger errorCode) {
+        NSLog(@"Failed to open WiFi Hotspot. Error code: %zd", errorCode);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"WiFi Error"
+                                                                         message:[NSString stringWithFormat:@"Failed to open WiFi hotspot (Error: %zd)", errorCode]
+                                                                  preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+        });
+    }];
+}
+
+- (void)getWiFiIPAddress {
+    NSLog(@"Getting WiFi IP Address...");
+    [QCSDKCmdCreator getDeviceWifiIPSuccess:^(NSString * _Nullable ipAddress) {
+        if (ipAddress) {
+            NSLog(@"WiFi IP Address: %@", ipAddress);
+            self.wifiIPAddress = ipAddress;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"WiFi IP Address"
+                                                                             message:ipAddress
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        } else {
+            NSLog(@"No WiFi IP Address available");
+        }
+    } failed:^{
+        NSLog(@"Failed to get WiFi IP Address");
+    }];
+}
+
+- (void)deleteAllMediaFiles {
+    UIAlertController *confirmAlert = [UIAlertController alertControllerWithTitle:@"Delete All Media?"
+                                                                         message:@"This will permanently delete all photos, videos, and audio files from the device."
+                                                                  preferredStyle:UIAlertControllerStyleAlert];
+    
+    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"Delete All" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        NSLog(@"Deleting all media files...");
+        [QCSDKCmdCreator deleleteAllMediasSuccess:^{
+            NSLog(@"All media files deleted successfully");
+            
+            self.photoCount = 0;
+            self.videoCount = 0;
+            self.audioCount = 0;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success"
+                                                                             message:@"All media files have been deleted"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        } fail:^{
+            NSLog(@"Failed to delete media files");
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                             message:@"Failed to delete media files"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        }];
+    }]];
+    
+    [self presentViewController:confirmAlert animated:YES completion:nil];
+}
+
+/* Removed - now using simplified WiFi flow
+- (void)startMediaTransferMode {
+    if (self.isTransferMode) {
+        NSLog(@"Stopping Media Transfer Mode...");
+        // Stop transfer mode
+        [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeTransferStop success:^{
+            NSLog(@"Media Transfer Mode stopped successfully");
+            self.isTransferMode = NO;
+            self.wifiSSID = nil;
+            self.wifiPassword = nil;
+            self.wifiIPAddress = nil;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Transfer Mode Stopped"
+                                                                             message:@"Media transfer mode has been disabled"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        } fail:^(NSInteger errorCode) {
+            NSLog(@"Failed to stop transfer mode. Error: %zd", errorCode);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                             message:[NSString stringWithFormat:@"Failed to stop transfer mode (Error: %zd)", errorCode]
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        }];
+    } else {
+        NSLog(@"Starting Media Transfer Mode...");
+        // First ensure we have WiFi info
+        if (!self.wifiSSID || !self.wifiIPAddress) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Setup Required"
+                                                                         message:@"Please open WiFi Hotspot first, then start transfer mode"
+                                                                  preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Open WiFi" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self openWiFiHotspot];
+            }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            return;
+        }
+        
+        // Start transfer mode
+        [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeTransfer success:^{
+            NSLog(@"Media Transfer Mode started successfully");
+            self.isTransferMode = YES;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Transfer Mode Active"
+                                                                             message:@"Device is now in media transfer mode. You can access media files via WiFi."
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Open Media Browser" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    WiFiMediaBrowser *browser = [[WiFiMediaBrowser alloc] init];
+                    browser.deviceIPAddress = self.wifiIPAddress;
+                    browser.wifiSSID = self.wifiSSID;
+                    browser.wifiPassword = self.wifiPassword;
+                    [self.navigationController pushViewController:browser animated:YES];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        } fail:^(NSInteger errorCode) {
+            NSLog(@"Failed to start transfer mode. Error: %zd", errorCode);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                             message:[NSString stringWithFormat:@"Failed to start transfer mode (Error: %zd)", errorCode]
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        }];
+    }
+}
+*/
 
 #pragma mark - Actions
 - (void)viewDidAppear:(BOOL)animated {
@@ -312,7 +588,12 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return QGDeviceActionTypeReserved;
+    // Show play audio option only if we have a recording
+    if (self.lastRecordedAudioURL) {
+        return QGDeviceActionTypeReserved;
+    } else {
+        return QGDeviceActionTypePlayRecordedAudio; // Don't show play option if no recording
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -360,6 +641,46 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
             if (self.aiImageData) {
                 cell.imageView.image = [UIImage imageWithData:self.aiImageData];
             }
+            break;
+        case QGDeviceActionTypeOpenWiFi:
+            cell.textLabel.text = self.wifiSSID ? @"WiFi Hotspot Active" : @"Open WiFi Hotspot";
+            if (self.wifiSSID) {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"SSID: %@\nPassword: %@\nIP: %@", 
+                                            self.wifiSSID, self.wifiPassword, 
+                                            self.wifiIPAddress ?: @"Getting IP..."];
+            } else {
+                cell.detailTextLabel.text = @"Enable WiFi for media transfer";
+            }
+            break;
+        case QGDeviceActionTypeGetWiFiIP:
+            cell.textLabel.text = @"Refresh WiFi IP Address";
+            if (self.wifiIPAddress) {
+                cell.detailTextLabel.text = self.wifiIPAddress;
+            } else {
+                cell.detailTextLabel.text = @"Tap to get IP address";
+            }
+            break;
+        case QGDeviceActionTypeDeleteAllMedia:
+            cell.textLabel.text = @"Delete All Media Files";
+            cell.detailTextLabel.text = @"⚠️ This will permanently delete all media";
+            break;
+        case QGDeviceActionTypeBrowseMedia:
+            cell.textLabel.text = @"Browse Media Files";
+            if (self.wifiSSID && self.wifiIPAddress) {
+                cell.detailTextLabel.text = @"Access media via WiFi";
+            } else {
+                cell.detailTextLabel.text = @"Open WiFi hotspot first";
+            }
+            break;
+        case QGDeviceActionTypePlayRecordedAudio:
+            if (self.lastRecordedAudioURL) {
+                cell.textLabel.text = self.playingAudio ? @"Stop Audio Playback" : @"Play Last Recording";
+                cell.detailTextLabel.text = self.lastRecordedAudioURL.lastPathComponent;
+            } else {
+                cell.textLabel.text = @"No Recording Available";
+                cell.detailTextLabel.text = @"Record audio first";
+            }
+            break;
         case QGDeviceActionTypeReserved:
             break;
         default:
@@ -398,11 +719,199 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         case QGDeviceActionTypeToggleTakeAIImage:
             [self takeAIImage];
             break;
+        case QGDeviceActionTypeOpenWiFi:
+            if (self.wifiSSID) {
+                // WiFi already open, ask what to do
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"WiFi Already Active"
+                                                                             message:[NSString stringWithFormat:@"SSID: %@\nPassword: %@", self.wifiSSID, self.wifiPassword]
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Close WiFi" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                    // Note: SDK may not have a close WiFi method, just clear our state
+                    self.wifiSSID = nil;
+                    self.wifiPassword = nil;
+                    self.wifiIPAddress = nil;
+                    self.isTransferMode = NO;
+                    [self.tableView reloadData];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Refresh" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [self openWiFiHotspot];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            } else {
+                [self openWiFiHotspot];
+            }
+            break;
+        case QGDeviceActionTypeGetWiFiIP:
+            [self getWiFiIPAddress];
+            break;
+        case QGDeviceActionTypeDeleteAllMedia:
+            [self deleteAllMediaFiles];
+            break;
+        case QGDeviceActionTypeBrowseMedia:
+            if (self.wifiSSID && self.wifiIPAddress) {
+                WiFiMediaBrowser *browser = [[WiFiMediaBrowser alloc] init];
+                browser.deviceIPAddress = self.wifiIPAddress;
+                browser.wifiSSID = self.wifiSSID;
+                browser.wifiPassword = self.wifiPassword;
+                [self.navigationController pushViewController:browser animated:YES];
+            } else {
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Setup Required"
+                                                                             message:@"Please open WiFi Hotspot first"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Open WiFi" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [self openWiFiHotspot];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+            break;
+        case QGDeviceActionTypePlayRecordedAudio:
+            [self playRecordedAudio];
+            break;
         case QGDeviceActionTypeReserved:
         default:
             break;
     }
 
+}
+
+#pragma mark - QCMicrophoneHALDelegate
+
+- (void)microphoneDidStartRecording {
+    NSLog(@"HAL: Microphone started recording");
+}
+
+- (void)microphoneDidStopRecording:(NSURL *)audioURL {
+    NSLog(@"HAL: Glasses recording stopped. Now checking for WiFi to download...");
+    
+    // Since we're recording on glasses only, audioURL will be nil
+    // We need to get the glasses IP and download the file
+    
+    // First, check if WiFi is available
+    [QCSDKCmdCreator getDeviceWifiIPSuccess:^(NSString * _Nullable ipAddress) {
+        if (ipAddress && ipAddress.length > 0) {
+            NSLog(@"HAL: Got glasses IP: %@, starting download...", ipAddress);
+            
+            // Download the recording from glasses
+            QCMicrophoneHAL *microphone = [QCAudioHAL sharedInstance].microphone;
+            [microphone downloadLastRecordingFromGlasses:ipAddress completion:^(NSURL * _Nullable localURL, NSError * _Nullable error) {
+                if (error) {
+                    NSLog(@"HAL: Download failed: %@", error.localizedDescription);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Download Failed"
+                                                                                     message:[NSString stringWithFormat:@"Could not download audio from glasses: %@", error.localizedDescription]
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+                        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                        [self presentViewController:alert animated:YES completion:nil];
+                    });
+                } else if (localURL) {
+                    NSLog(@"HAL: Download successful! File at: %@", localURL.path);
+                    
+                    // Save the URL for playback
+                    self.lastRecordedAudioURL = localURL;
+                    
+                    // Show success alert
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.tableView reloadData]; // Update table to show play option
+                        
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Audio Downloaded"
+                                                                                     message:@"Glasses audio downloaded successfully!\nYou can now play it back!"
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+                        [alert addAction:[UIAlertAction actionWithTitle:@"Play Now" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                            [self playRecordedAudio];
+                        }]];
+                        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                        [self presentViewController:alert animated:YES completion:nil];
+                    });
+                }
+            }];
+        } else {
+            NSLog(@"HAL: No WiFi IP available. Need to enable WiFi transfer mode first.");
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"WiFi Required"
+                                                                             message:@"Recording saved on glasses.\nTo download and play, please:\n1. Enable WiFi Transfer mode\n2. Connect to glasses WiFi\n3. Try downloading again"
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Enable WiFi Transfer" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    // Enable WiFi transfer mode
+                    [self openWifiTransferMode];
+                }]];
+                [alert addAction:[UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            });
+        }
+    } failed:^{
+        NSLog(@"HAL: Failed to get WiFi IP. Recording is saved on glasses but cannot download.");
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Recording Saved on Glasses"
+                                                                         message:@"Audio recorded on glasses.\nEnable WiFi Transfer mode to download and play."
+                                                                  preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+        });
+    }];
+}
+
+- (void)microphoneDidUpdateLevel:(Float32)level {
+    // Could update UI with audio level meter
+    NSLog(@"HAL: Audio level: %.2f", level);
+}
+
+- (void)microphoneDidEncounterError:(NSError *)error {
+    NSLog(@"HAL: Microphone error: %@", error.localizedDescription);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Recording Error"
+                                                                     message:error.localizedDescription
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+    });
+}
+
+#pragma mark - QCSpeakerHALDelegate
+
+- (void)speakerDidStartPlayback {
+    NSLog(@"HAL: Speaker started playback");
+    self.playingAudio = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
+}
+
+- (void)speakerDidFinishPlayback {
+    NSLog(@"HAL: Speaker finished playback");
+    self.playingAudio = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Playback Complete"
+                                                                     message:@"Audio playback finished"
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+    });
+}
+
+- (void)speakerDidPausePlayback {
+    NSLog(@"HAL: Speaker paused playback");
+}
+
+- (void)speakerDidEncounterError:(NSError *)error {
+    NSLog(@"HAL: Speaker error: %@", error.localizedDescription);
+    self.playingAudio = NO;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Playback Error"
+                                                                     message:error.localizedDescription
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+    });
 }
 
 @end
