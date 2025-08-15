@@ -5,13 +5,36 @@
 //  Created by Elijah Arbee on 8/15/25.
 //
 
-import Testing
+import XCTest
 @testable import GlassesFramework
 
-struct GlassesFrameworkTests {
-
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+class GlassesFrameworkTests: XCTestCase {
+    
+    override func setUp() {
+        super.setUp()
     }
-
+    
+    override func tearDown() {
+        super.tearDown()
+    }
+    
+    func testFrameworkVersion() {
+        XCTAssertEqual(GlassesSDK.version, "1.0.0", "Framework version should be 1.0.0")
+    }
+    
+    func testFrameworkInitialization() {
+        XCTAssertNoThrow(GlassesSDK.initialize(), "Framework initialization should not throw")
+    }
+    
+    func testBluetoothManagerSingleton() {
+        let manager1 = GlassesSDK.bluetoothManager
+        let manager2 = GlassesSDK.bluetoothManager
+        XCTAssertTrue(manager1 === manager2, "BluetoothManager should be a singleton")
+    }
+    
+    func testBluetoothManagerSharedInstance() {
+        let shared = BluetoothManager.shared
+        let sdkManager = GlassesSDK.bluetoothManager
+        XCTAssertTrue(shared === sdkManager, "BluetoothManager.shared should be the same as GlassesSDK.bluetoothManager")
+    }
 }

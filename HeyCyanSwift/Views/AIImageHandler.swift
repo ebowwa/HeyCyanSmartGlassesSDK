@@ -233,7 +233,16 @@ private struct FullImageView: View {
                         Button("Done") { dismiss() }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        ShareLink(item: Image(uiImage: image), preview: SharePreview("AI Image", image: Image(uiImage: image)))
+                        Button(action: {
+                            let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                               let window = windowScene.windows.first,
+                               let rootVC = window.rootViewController {
+                                rootVC.present(activityVC, animated: true)
+                            }
+                        }) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
                     }
                 }
         }

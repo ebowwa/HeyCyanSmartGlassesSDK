@@ -12,8 +12,22 @@ import GlassesFramework
 class ContentViewModel: ObservableObject {
     @Published var showingScanView = false
     @Published var showingGallery = false
+    @Published var isConnected = false
+    @Published var connectedDeviceName = ""
     
     let bluetoothManager = GlassesSDK.bluetoothManager
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Subscribe to BluetoothManager changes
+        bluetoothManager.$isConnected
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isConnected)
+        
+        bluetoothManager.$connectedDeviceName
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$connectedDeviceName)
+    }
     
     // Navigation actions
     func showScanner() {
@@ -25,7 +39,7 @@ class ContentViewModel: ObservableObject {
     }
     
     func handleConnectionAction() {
-        if bluetoothManager.isConnected {
+        if isConnected {
             bluetoothManager.disconnect()
         } else {
             showScanner()
@@ -34,12 +48,12 @@ class ContentViewModel: ObservableObject {
     
     // Computed properties for UI
     var navigationTitle: String {
-        bluetoothManager.isConnected 
-            ? bluetoothManager.connectedDeviceName 
+        isConnected 
+            ? connectedDeviceName 
             : "HeyCyan Glasses"
     }
     
     var connectionButtonTitle: String {
-        bluetoothManager.isConnected ? "Disconnect" : "Search"
+        isConnected ? "Disconnect" : "Search"
     }
 }

@@ -36,7 +36,7 @@ private struct MainContentView: View {
     
     var body: some View {
         VStack {
-            if viewModel.bluetoothManager.isConnected {
+            if viewModel.isConnected {
                 ConnectedDeviceView(viewModel: viewModel)
             } else {
                 ConnectionStatusView(
