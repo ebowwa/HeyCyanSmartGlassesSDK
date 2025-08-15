@@ -8,9 +8,11 @@
 import Foundation
 import CoreBluetooth
 import Combine
+import UIKit
+import QCSDK
 
 // Device action types matching the Objective-C demo
-enum DeviceActionType: Int, CaseIterable {
+public enum DeviceActionType: Int, CaseIterable {
     case getVersion = 0
     case setTime
     case getBattery
@@ -20,7 +22,7 @@ enum DeviceActionType: Int, CaseIterable {
     case toggleAudioRecording
     case takeAIImage
     
-    var title: String {
+    public var title: String {
         switch self {
         case .getVersion:
             return "Get Version Info"
@@ -43,39 +45,41 @@ enum DeviceActionType: Int, CaseIterable {
 }
 
 // Device information model
-struct DeviceInfo {
-    var hardwareVersion: String = ""
-    var firmwareVersion: String = ""
-    var hardwareWiFiVersion: String = ""
-    var firmwareWiFiVersion: String = ""
-    var macAddress: String = ""
-    var batteryLevel: Int = 0
-    var isCharging: Bool = false
-    var photoCount: Int = 0
-    var videoCount: Int = 0
-    var audioCount: Int = 0
-    var isRecordingVideo: Bool = false
-    var isRecordingAudio: Bool = false
-    var aiImageData: Data?
+public struct DeviceInfo {
+    public var hardwareVersion: String = ""
+    public var firmwareVersion: String = ""
+    public var hardwareWiFiVersion: String = ""
+    public var firmwareWiFiVersion: String = ""
+    public var macAddress: String = ""
+    public var batteryLevel: Int = 0
+    public var isCharging: Bool = false
+    public var photoCount: Int = 0
+    public var videoCount: Int = 0
+    public var audioCount: Int = 0
+    public var isRecordingVideo: Bool = false
+    public var isRecordingAudio: Bool = false
+    public var aiImageData: Data?
+    
+    public init() {}
 }
 
 // Discovered device model
-struct DiscoveredDevice: Identifiable {
-    let id = UUID()
-    let peripheral: CBPeripheral
-    let name: String
-    let macAddress: String
+public struct DiscoveredDevice: Identifiable {
+    public let id = UUID()
+    public let peripheral: CBPeripheral
+    public let name: String
+    public let macAddress: String
 }
 
-class BluetoothManager: NSObject, ObservableObject {
-    static let shared = BluetoothManager()
+public class BluetoothManager: NSObject, ObservableObject {
+    public static let shared = BluetoothManager()
     
-    @Published var isConnected = false
-    @Published var isScanning = false
-    @Published var discoveredDevices: [DiscoveredDevice] = []
-    @Published var connectedDeviceName: String = ""
-    @Published var deviceInfo = DeviceInfo()
-    @Published var connectionState: QCState = .unbind
+    @Published public var isConnected = false
+    @Published public var isScanning = false
+    @Published public var discoveredDevices: [DiscoveredDevice] = []
+    @Published public var connectedDeviceName: String = ""
+    @Published public var deviceInfo = DeviceInfo()
+    @Published public var connectionState: QCState = .unbind
     
     private var centralManager: QCCentralManager?
     private var sdkManager: QCSDKManager?
@@ -94,8 +98,9 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     // MARK: - Scanning
-    func startScanning() {
-        print("BluetoothManager: Starting scan...")
+    public func startScanning() {
+        print("🔍 BluetoothManager: Starting scan...")
+        print("🔍 Central manager exists: \(centralManager != nil)")
         DispatchQueue.main.async { [weak self] in
             self?.isScanning = true
             self?.discoveredDevices.removeAll()
@@ -104,6 +109,7 @@ class BluetoothManager: NSObject, ObservableObject {
         
         // Force check for devices after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            print("🔍 Force checking for devices...")
             self?.forceUpdateDevices()
         }
     }
@@ -126,7 +132,7 @@ class BluetoothManager: NSObject, ObservableObject {
                     let device = DiscoveredDevice(
                         peripheral: qcPeripheral.peripheral,
                         name: name,
-                        macAddress: qcPeripheral.mac ?? ""
+                        macAddress: qcPeripheral.mac
                     )
                     devices.append(device)
                     print("Force added device: \(name) - \(qcPeripheral.peripheral.identifier)")
@@ -140,7 +146,7 @@ class BluetoothManager: NSObject, ObservableObject {
         }
     }
     
-    func stopScanning() {
+    public func stopScanning() {
         print("BluetoothManager: Stopping scan...")
         DispatchQueue.main.async { [weak self] in
             self?.isScanning = false
@@ -149,7 +155,7 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     // MARK: - Connection
-    func connect(to device: DiscoveredDevice) {
+    public func connect(to device: DiscoveredDevice) {
         print("Attempting to connect to: \(device.name) - \(device.peripheral.identifier)")
         
         // For reconnection, we need to get a fresh peripheral reference
@@ -160,7 +166,7 @@ class BluetoothManager: NSObject, ObservableObject {
         }
     }
     
-    func disconnect() {
+    public func disconnect() {
         centralManager?.remove()
         // Clear the discovered devices after disconnect to force a fresh scan
         DispatchQueue.main.async { [weak self] in
@@ -171,7 +177,7 @@ class BluetoothManager: NSObject, ObservableObject {
     }
     
     // MARK: - Device Actions
-    func getVersionInfo() {
+    public func getVersionInfo() {
         QCSDKCmdCreator.getDeviceVersionInfoSuccess({ [weak self] (hdVersion: String?, firmVersion: String?, hdWifiVersion: String?, firmWifiVersion: String?) in
             self?.deviceInfo.hardwareVersion = hdVersion ?? ""
             self?.deviceInfo.firmwareVersion = firmVersion ?? ""
@@ -182,7 +188,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func getMacAddress() {
+    public func getMacAddress() {
         QCSDKCmdCreator.getDeviceMacAddressSuccess({ [weak self] macAddress in
             self?.deviceInfo.macAddress = macAddress ?? ""
         }, fail: {
@@ -190,7 +196,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func setDeviceTime() {
+    public func setDeviceTime() {
         QCSDKCmdCreator.setupDeviceDateTime { isSuccess, error in
             if let error = error {
                 print("Failed to set time: \(error)")
@@ -200,7 +206,7 @@ class BluetoothManager: NSObject, ObservableObject {
         }
     }
     
-    func getBatteryStatus() {
+    public func getBatteryStatus() {
         QCSDKCmdCreator.getDeviceBattery({ [weak self] battery, charging in
             self?.deviceInfo.batteryLevel = battery
             self?.deviceInfo.isCharging = charging
@@ -209,7 +215,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func getMediaInfo() {
+    public func getMediaInfo() {
         QCSDKCmdCreator.getDeviceMedia({ [weak self] photo, video, audio, type in
             self?.deviceInfo.photoCount = photo
             self?.deviceInfo.videoCount = video
@@ -219,7 +225,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func takePhoto() {
+    public func takePhoto() {
         QCSDKCmdCreator.setDeviceMode(.photo, success: {
             print("Photo taken")
         }, fail: { mode in
@@ -227,7 +233,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func toggleVideoRecording() {
+    public func toggleVideoRecording() {
         let mode: QCOperatorDeviceMode = deviceInfo.isRecordingVideo ? .videoStop : .video
         QCSDKCmdCreator.setDeviceMode(mode, success: { [weak self] in
             self?.deviceInfo.isRecordingVideo.toggle()
@@ -236,7 +242,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func toggleAudioRecording() {
+    public func toggleAudioRecording() {
         let mode: QCOperatorDeviceMode = deviceInfo.isRecordingAudio ? .audioStop : .audio
         QCSDKCmdCreator.setDeviceMode(mode, success: { [weak self] in
             self?.deviceInfo.isRecordingAudio.toggle()
@@ -245,7 +251,7 @@ class BluetoothManager: NSObject, ObservableObject {
         })
     }
     
-    func takeAIImage() {
+    public func takeAIImage() {
         QCSDKCmdCreator.setDeviceMode(.aiPhoto, success: {
             print("AI photo requested")
         }, fail: { mode in
@@ -256,9 +262,9 @@ class BluetoothManager: NSObject, ObservableObject {
 
 // MARK: - QCCentralManagerDelegate
 extension BluetoothManager: QCCentralManagerDelegate {
-    func didScanPeripherals(_ peripheralArr: [Any]?) {
+    public func didScanPeripherals(_ peripheralArr: [QCBlePeripheral]?) {
         print("didScanPeripherals called with \(peripheralArr?.count ?? 0) devices")
-        guard let peripherals = peripheralArr as? [QCBlePeripheral] else { 
+        guard let peripherals = peripheralArr else { 
             print("Failed to cast peripherals")
             return 
         }
@@ -276,7 +282,7 @@ extension BluetoothManager: QCCentralManagerDelegate {
                 return DiscoveredDevice(
                     peripheral: peripheral.peripheral,
                     name: name,
-                    macAddress: peripheral.mac ?? ""
+                    macAddress: peripheral.mac
                 )
             }
             
@@ -292,63 +298,73 @@ extension BluetoothManager: QCCentralManagerDelegate {
         }
     }
     
-    func didState(_ state: QCState) {
+    public func didState(_ state: QCState) {
+        print("🔵 Connection state changed to: \(state.rawValue)")
         connectionState = state
         
         switch state {
         case .unbind:
+            print("📱 Device unbound")
             isConnected = false
             connectedDeviceName = ""
         case .connecting:
-            print("Connecting...")
+            print("🔄 Connecting...")
         case .connected:
+            print("✅ Connected!")
             isConnected = true
             if let peripheral = centralManager?.connectedPeripheral {
                 connectedDeviceName = peripheral.name ?? "Unknown Device"
+                print("✅ Connected to: \(connectedDeviceName)")
             }
-        case .disconnecting, .disconnected:
+        case .disconnecting:
+            print("🔄 Disconnecting...")
+            isConnected = false
+            connectedDeviceName = ""
+        case .disconnected:
+            print("❌ Disconnected")
             isConnected = false
             connectedDeviceName = ""
         default:
+            print("⚠️ Unknown state: \(state.rawValue)")
             break
         }
     }
     
-    func didConnected(_ peripheral: CBPeripheral) {
+    public func didConnected(_ peripheral: CBPeripheral) {
         print("Connected to: \(peripheral.name ?? "Unknown")")
         isConnected = true
         connectedDeviceName = peripheral.name ?? "Unknown Device"
     }
     
-    func didDisconnecte(_ peripheral: CBPeripheral) {
+    public func didDisconnecte(_ peripheral: CBPeripheral) {
         print("Disconnected from: \(peripheral.name ?? "Unknown")")
         isConnected = false
         connectedDeviceName = ""
     }
     
-    func didFailConnected(_ peripheral: CBPeripheral, error: Error?) {
+    public func didFailConnected(_ peripheral: CBPeripheral, error: Error?) {
         print("Failed to connect to: \(peripheral.name ?? "Unknown"), error: \(error?.localizedDescription ?? "Unknown error")")
     }
     
-    func didBluetoothState(_ state: QCBluetoothState) {
+    public func didBluetoothState(_ state: QCBluetoothState) {
         print("Bluetooth state: \(state.rawValue)")
     }
 }
 
 // MARK: - QCSDKManagerDelegate
 extension BluetoothManager: QCSDKManagerDelegate {
-    func didUpdateBatteryLevel(_ battery: Int, charging: Bool) {
+    public func didUpdateBatteryLevel(_ battery: Int, charging: Bool) {
         deviceInfo.batteryLevel = battery
         deviceInfo.isCharging = charging
     }
     
-    func didUpdateMedia(withPhotoCount photo: Int, videoCount video: Int, audioCount audio: Int, type: Int) {
+    public func didUpdateMedia(withPhotoCount photo: Int, videoCount video: Int, audioCount audio: Int, type: Int) {
         deviceInfo.photoCount = photo
         deviceInfo.videoCount = video
         deviceInfo.audioCount = audio
     }
     
-    func didReceiveAIChatImageData(_ imageData: Data) {
+    public func didReceiveAIChatImageData(_ imageData: Data) {
         print("🎨 AI image received: \(imageData.count) bytes")
         deviceInfo.aiImageData = imageData
         

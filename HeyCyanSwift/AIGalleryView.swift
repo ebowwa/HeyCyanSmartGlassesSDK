@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import GlassesFramework
 
 struct AIImage: Identifiable {
     let id = UUID()
@@ -244,9 +245,6 @@ struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
-extension Notification.Name {
-    static let aiImageReceived = Notification.Name("aiImageReceived")
-}
 
 #Preview {
     AIGalleryView()

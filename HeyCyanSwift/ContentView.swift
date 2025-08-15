@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import GlassesFramework
 
 struct ContentView: View {
-    @StateObject private var bluetoothManager = BluetoothManager.shared
+    @StateObject private var bluetoothManager = GlassesSDK.bluetoothManager
     @State private var showingScanView = false
     @State private var showingGallery = false
     

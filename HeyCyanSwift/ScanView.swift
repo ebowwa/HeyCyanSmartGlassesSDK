@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import GlassesFramework
 
 struct ScanView: View {
-    @ObservedObject var bluetoothManager = BluetoothManager.shared
+    @ObservedObject var bluetoothManager = GlassesSDK.bluetoothManager
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
