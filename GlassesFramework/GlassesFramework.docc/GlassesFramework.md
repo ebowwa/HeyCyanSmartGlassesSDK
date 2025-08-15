@@ -93,6 +93,30 @@ The framework is built with a modular architecture:
 - ``BluetoothManager/toggleAudioRecording()``
 - ``BluetoothManager/takeAIImage()``
 
+### Audio and Volume Control
+
+The HeyCyan glasses function as standard Bluetooth headphones for audio playback and volume control:
+
+- **Volume Control**: The glasses use iOS system volume controls. When connected, they appear as a Bluetooth HFP (Hands-Free Profile) audio device
+- **Adjusting Volume**: Use the iPhone's physical volume buttons or Control Center to adjust the glasses' volume
+- **Audio Routing**: The glasses automatically become the active audio output when connected, shown as "M01_9FD8 (BluetoothHFP)" in audio settings
+- **Stereo Audio**: The glasses support full stereo audio playback with proper left/right channel separation. Use AVAudioPlayer for best Bluetooth compatibility rather than AVAudioEngine
+
+**Note**: The QCSDK volume control commands (`getVolumeSettings`/`setVolumeSettings`) are not supported on current firmware versions. Volume control is handled entirely through iOS system audio.
+
+### Microphone and Audio Recording
+
+The HeyCyan glasses include microphone functionality with two distinct modes:
+
+- **iOS Audio Input**: The glasses' microphone appears as a standard Bluetooth HFP audio input device when connected. You can record audio through the glasses using AVAudioRecorder or any iOS audio recording API. The glasses will be listed as "M01_9FD8 (BluetoothHFP)" in the available audio inputs
+- **Internal Recording Mode**: The glasses can record audio directly to their internal storage using `toggleAudioRecording()`. This is a one-way recording that saves audio files on the glasses themselves, which can later be retrieved. This mode does not stream audio back to the phone
+- **Recording Quality**: The microphone supports high-quality audio recording at 44.1kHz sample rate with AAC compression
+- **Input Monitoring**: You can monitor microphone input levels in real-time using AVAudioRecorder's metering capabilities
+
+**Usage Example**: 
+- For phone-based recording: Use AVAudioRecorder with the glasses selected as the audio input
+- For glasses storage recording: Call `bluetoothManager.toggleAudioRecording()` to start/stop internal recording
+
 ### Device Information
 
 - ``BluetoothManager/getVersionInfo()``

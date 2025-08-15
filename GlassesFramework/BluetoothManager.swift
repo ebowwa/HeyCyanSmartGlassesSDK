@@ -11,6 +11,38 @@ import Combine
 import UIKit
 import QCSDK
 
+// Public wrapper for QCOperatorDeviceMode
+public enum DeviceOperationMode: Int {
+    case unknown = 0x00
+    case photo = 0x01
+    case video = 0x02
+    case videoStop = 0x03
+    case transfer = 0x04
+    case ota = 0x05
+    case aiPhoto = 0x06
+    case speechRecognition = 0x07
+    case audio = 0x08
+    
+    var qcMode: QCOperatorDeviceMode {
+        return QCOperatorDeviceMode(rawValue: self.rawValue) ?? .unkown
+    }
+}
+
+// Public wrapper for AI Speak Mode
+public enum AISpeakMode: Int {
+    case start = 0x01
+    case hold = 0x02
+    case stop = 0x03
+    case thinkingStart = 0x04
+    case thinkingHold = 0x05
+    case thinkingStop = 0x06
+    case noNet = 0xf1
+    
+    var qgMode: QGAISpeakMode {
+        return QGAISpeakMode(rawValue: self.rawValue) ?? .stop
+    }
+}
+
 // Device action types matching the Objective-C demo
 public enum DeviceActionType: Int, CaseIterable {
     case getVersion = 0
@@ -405,6 +437,94 @@ extension BluetoothManager: QCSDKManagerDelegate {
                     object: nil,
                     userInfo: ["error": "Invalid image data"]
                 )
+            }
+        }
+    }
+    
+    // MARK: - Volume Control Wrappers
+    
+    public func getVolumeSettings(completion: @escaping (QCVolumeInfoModel?) -> Void) {
+        QCSDKCmdCreator.getVolumeWithFinished { success, error, volumeInfo in
+            print("🔊 Volume response - success: \(success), error: \(String(describing: error)), info type: \(type(of: volumeInfo))")
+            if success, let info = volumeInfo as? QCVolumeInfoModel {
+                completion(info)
+            } else {
+                if let error = error {
+                    print("❌ Volume error: \(error.localizedDescription)")
+                }
+                completion(nil)
+            }
+        }
+    }
+    
+    public func setVolumeSettings(_ volumeInfo: QCVolumeInfoModel, completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.setVolume(volumeInfo) { success, error, _ in
+            completion(success)
+        }
+    }
+    
+    // MARK: - WiFi Management Wrappers
+    
+    public func openWiFiWithMode(_ mode: DeviceOperationMode, success: @escaping (String?, String?) -> Void, fail: @escaping (Int) -> Void) {
+        QCSDKCmdCreator.openWifi(with: mode.qcMode, success: success, fail: fail)
+    }
+    
+    public func getBluetoothStatus(completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.getBTStatus { success, error in
+            completion(success)
+        }
+    }
+    
+    public func setBluetoothStatus(_ enabled: Bool, completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.setBTStatus(enabled) { success, error in
+            completion(success)
+        }
+    }
+    
+    // MARK: - Video/Audio Configuration Wrappers
+    
+    public func getVideoInfo(success: @escaping (Int, Int) -> Void, fail: @escaping () -> Void) {
+        QCSDKCmdCreator.getVideoInfoSuccess(success, fail: fail)
+    }
+    
+    public func getAudioInfo(success: @escaping (Int, Int) -> Void, fail: @escaping () -> Void) {
+        QCSDKCmdCreator.getAudioInfoSuccess(success, fail: fail)
+    }
+    
+    // MARK: - Advanced Features Wrappers
+    
+    public func getVoiceWakeupStatus(completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.getVoiceWakeup { success, error, status in
+            if success, let wakeupEnabled = status as? Bool {
+                completion(wakeupEnabled)
+            } else {
+                completion(false)
+            }
+        }
+    }
+    
+    public func getWearingDetectionStatus(completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.getWearingDetection { success, error, status in
+            if success, let wearingEnabled = status as? Bool {
+                completion(wearingEnabled)
+            } else {
+                completion(false)
+            }
+        }
+    }
+    
+    public func setAISpeakMode(_ mode: AISpeakMode, completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.setAISpeekModel(mode.qgMode) { success, error in
+            completion(success)
+        }
+    }
+    
+    public func getDeviceConfig(completion: @escaping (Data?) -> Void) {
+        QCSDKCmdCreator.getDeviceConfig { success, error, config in
+            if success, let configData = config as? Data {
+                completion(configData)
+            } else {
+                completion(nil)
             }
         }
     }
