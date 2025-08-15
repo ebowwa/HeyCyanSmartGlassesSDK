@@ -10,179 +10,66 @@ import SwiftUI
 import GlassesFramework
 
 struct ContentView: View {
-    @StateObject private var bluetoothManager = GlassesSDK.bluetoothManager
-    @State private var showingScanView = false
-    @State private var showingGallery = false
+    @StateObject private var viewModel = ContentViewModel()
     
     var body: some View {
         NavigationView {
-            VStack {
-                if bluetoothManager.isConnected {
-                    connectedView
-                } else {
-                    disconnectedView
+            MainContentView(viewModel: viewModel)
+                .navigationTitle(viewModel.navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ConnectionToolbarButton(viewModel: viewModel)
                 }
-            }
-            .navigationTitle(bluetoothManager.isConnected ? bluetoothManager.connectedDeviceName : "HeyCyan Glasses")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(bluetoothManager.isConnected ? "Disconnect" : "Search") {
-                        if bluetoothManager.isConnected {
-                            bluetoothManager.disconnect()
-                        } else {
-                            showingScanView = true
-                        }
-                    }
+                .sheet(isPresented: $viewModel.showingScanView) {
+                    ScanView()
                 }
-            }
-            .sheet(isPresented: $showingScanView) {
-                ScanView()
-            }
-            .sheet(isPresented: $showingGallery) {
-                AIGalleryView()
-            }
+                .sheet(isPresented: $viewModel.showingGallery) {
+                    AIGalleryView()
+                }
         }
     }
+}
+
+// MARK: - Main Content
+private struct MainContentView: View {
+    @ObservedObject var viewModel: ContentViewModel
     
-    var disconnectedView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "eyeglasses")
-                .font(.system(size: 80))
-                .foregroundColor(.gray)
-            
-            Text("No Device Connected")
-                .font(.title2)
-                .foregroundColor(.secondary)
-            
-            Button(action: {
-                showingScanView = true
-            }) {
-                Label("Search for Devices", systemImage: "magnifyingglass")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-        }
-        .padding()
-    }
-    
-    var connectedView: some View {
+    var body: some View {
         VStack {
-            // Gallery button at the top
-            Button(action: {
-                showingGallery = true
-            }) {
-                HStack {
-                    Image(systemName: "photo.stack")
-                    Text("AI Gallery")
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
-                .padding()
-                .background(Color(UIColor.systemGray6))
-                .cornerRadius(10)
-            }
-            .padding(.horizontal)
-            .padding(.top)
-            
-            // Device actions list
-            List {
-                ForEach(DeviceActionType.allCases, id: \.self) { action in
-                    DeviceActionRow(action: action, bluetoothManager: bluetoothManager)
-                }
+            if viewModel.bluetoothManager.isConnected {
+                ConnectedDeviceView(viewModel: viewModel)
+            } else {
+                ConnectionStatusView(
+                    isConnected: false,
+                    deviceName: "",
+                    onSearchTapped: viewModel.showScanner
+                )
             }
         }
     }
 }
 
-struct DeviceActionRow: View {
-    let action: DeviceActionType
-    @ObservedObject var bluetoothManager: BluetoothManager
+// MARK: - Connected Device View
+private struct ConnectedDeviceView: View {
+    @ObservedObject var viewModel: ContentViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(action.title)
-                    .font(.headline)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
-            }
-            
-            if let detail = getDetailText() {
-                Text(detail)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(nil)
-            }
-            
-            if action == .takeAIImage, let imageData = bluetoothManager.deviceInfo.aiImageData {
-                if let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 100)
-                        .cornerRadius(8)
-                }
-            }
-        }
-        .padding(.vertical, 4)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            performAction()
+        VStack {
+            GalleryButtonView(action: viewModel.showGallery)
+            DeviceActionsListView(bluetoothManager: viewModel.bluetoothManager)
         }
     }
+}
+
+// MARK: - Toolbar Button
+private struct ConnectionToolbarButton: ToolbarContent {
+    @ObservedObject var viewModel: ContentViewModel
     
-    func getDetailText() -> String? {
-        let info = bluetoothManager.deviceInfo
-        
-        switch action {
-        case .getVersion:
-            if !info.hardwareVersion.isEmpty {
-                return """
-                Hardware: \(info.hardwareVersion)
-                Firmware: \(info.firmwareVersion)
-                WiFi HW: \(info.hardwareWiFiVersion)
-                WiFi FW: \(info.firmwareWiFiVersion)
-                """
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button(viewModel.connectionButtonTitle) {
+                viewModel.handleConnectionAction()
             }
-        case .getBattery:
-            if info.batteryLevel > 0 {
-                return "Battery: \(info.batteryLevel)%, Charging: \(info.isCharging ? "Yes" : "No")"
-            }
-        case .getMediaInfo:
-            return "Photos: \(info.photoCount), Videos: \(info.videoCount), Audio: \(info.audioCount)"
-        case .toggleVideoRecording:
-            return info.isRecordingVideo ? "Recording..." : "Tap to start recording"
-        case .toggleAudioRecording:
-            return info.isRecordingAudio ? "Recording..." : "Tap to start recording"
-        default:
-            return nil
-        }
-        return nil
-    }
-    
-    func performAction() {
-        switch action {
-        case .getVersion:
-            bluetoothManager.getVersionInfo()
-        case .setTime:
-            bluetoothManager.setDeviceTime()
-        case .getBattery:
-            bluetoothManager.getBatteryStatus()
-        case .getMediaInfo:
-            bluetoothManager.getMediaInfo()
-        case .takePhoto:
-            bluetoothManager.takePhoto()
-        case .toggleVideoRecording:
-            bluetoothManager.toggleVideoRecording()
-        case .toggleAudioRecording:
-            bluetoothManager.toggleAudioRecording()
-        case .takeAIImage:
-            bluetoothManager.takeAIImage()
         }
     }
 }

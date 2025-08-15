@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		763803FD2E4EFC4100F42622 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; };
-		763803FE2E4EFC4100F42622 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		76380FB12E4FA05D00F42622 /* GlassesFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76380FA62E4FA05C00F42622 /* GlassesFramework.framework */; };
 		76380FBB2E4FA05D00F42622 /* GlassesFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76380FA62E4FA05C00F42622 /* GlassesFramework.framework */; };
 		76380FBC2E4FA05D00F42622 /* GlassesFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 76380FA62E4FA05C00F42622 /* GlassesFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		763811392E4FA41400F42622 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; };
-		7638113A2E4FA41500F42622 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		763812172E4FB0C000F42622 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; };
+		763812182E4FB0C000F42622 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,18 +61,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				76380FBC2E4FA05D00F42622 /* GlassesFramework.framework in Embed Frameworks */,
-				763803FE2E4EFC4100F42622 /* QCSDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7638113B2E4FA41500F42622 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				7638113A2E4FA41500F42622 /* QCSDK.framework in Embed Frameworks */,
+				763812182E4FB0C000F42622 /* QCSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -139,7 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				76380FBB2E4FA05D00F42622 /* GlassesFramework.framework in Frameworks */,
-				763803FD2E4EFC4100F42622 /* QCSDK.framework in Frameworks */,
+				763812172E4FB0C000F42622 /* QCSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +288,6 @@
 				76380FA22E4FA05C00F42622 /* Sources */,
 				76380FA32E4FA05C00F42622 /* Frameworks */,
 				76380FA42E4FA05C00F42622 /* Resources */,
-				7638113B2E4FA41500F42622 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -635,6 +622,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app saves AI-generated images from your glasses to your photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app saves AI-generated images from your glasses to your photo library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -670,6 +659,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app saves AI-generated images from your glasses to your photo library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app saves AI-generated images from your glasses to your photo library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -788,6 +779,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.GlassesFramework;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -828,6 +820,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.GlassesFramework;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

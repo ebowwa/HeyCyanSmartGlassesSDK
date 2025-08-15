@@ -252,10 +252,20 @@ public class BluetoothManager: NSObject, ObservableObject {
     }
     
     public func takeAIImage() {
+        print("📸 Requesting AI image capture...")
         QCSDKCmdCreator.setDeviceMode(.aiPhoto, success: {
-            print("AI photo requested")
+            print("✅ AI photo request sent successfully")
+            // The image will be received via didReceiveAIChatImageData delegate
         }, fail: { mode in
-            print("Failed to take AI photo, current mode: \(mode)")
+            print("❌ Failed to take AI photo, current mode: \(mode)")
+            // Post failure notification
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: Notification.Name("AIImageCaptureFailed"),
+                    object: nil,
+                    userInfo: ["error": "Device is in mode \(mode)"]
+                )
+            }
         })
     }
 }
@@ -366,17 +376,36 @@ extension BluetoothManager: QCSDKManagerDelegate {
     
     public func didReceiveAIChatImageData(_ imageData: Data) {
         print("🎨 AI image received: \(imageData.count) bytes")
+        
+        // Store in device info for immediate access
         deviceInfo.aiImageData = imageData
         
         // Verify it's a valid image
         if let image = UIImage(data: imageData) {
-            print("✅ Valid image: \(image.size.width)x\(image.size.height)")
-            // Post notification for gallery
+            print("✅ Valid AI image: \(image.size.width)x\(image.size.height)")
+            
+            // Post notification for all listeners (gallery, handlers, etc.)
+            // The AIImageHandler will handle saving to photo library and gallery
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: .aiImageReceived, object: imageData)
+                NotificationCenter.default.post(
+                    name: .aiImageReceived,
+                    object: imageData,
+                    userInfo: [
+                        "timestamp": Date(),
+                        "size": imageData.count,
+                        "dimensions": "\(image.size.width)x\(image.size.height)"
+                    ]
+                )
             }
         } else {
-            print("❌ Invalid image data")
+            print("❌ Invalid image data received")
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: Notification.Name("AIImageCaptureFailed"),
+                    object: nil,
+                    userInfo: ["error": "Invalid image data"]
+                )
+            }
         }
     }
 }

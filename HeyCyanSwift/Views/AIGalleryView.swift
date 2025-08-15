@@ -27,23 +27,13 @@ class AIImageStore: ObservableObject {
         try? FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
         loadImages()
         
-        // Set up global listener for AI images
-        NotificationCenter.default.addObserver(
-            forName: .aiImageReceived,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            print("🌍 Global listener: AI image received")
-            if let imageData = notification.object as? Data,
-               let image = UIImage(data: imageData) {
-                print("✅ Global: Adding image to store")
-                self?.addImage(image)
-            }
-        }
+        // Note: AIImageHandler already observes .aiImageReceived and adds to the store
+        // We don't need another observer here to avoid duplicates
     }
     
     func addImage(_ image: UIImage) {
         print("📝 AIImageStore: Adding new image to gallery")
+        print("📊 Stack trace: \(Thread.callStackSymbols.prefix(5).joined(separator: "\n"))")
         let aiImage = AIImage(image: image, timestamp: Date())
         images.insert(aiImage, at: 0)
         saveImageToDisk(aiImage)
@@ -192,6 +182,30 @@ struct ImageDetailView: View {
     let aiImage: AIImage
     let onShare: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var showingSaveAlert = false
+    @State private var saveAlertMessage = ""
+    
+    func saveToPhotoLibrary(_ image: UIImage) {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized, .limited:
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    saveAlertMessage = "Image saved to photo library!"
+                    showingSaveAlert = true
+                case .denied, .restricted:
+                    saveAlertMessage = "Photo library access denied. Please enable in Settings."
+                    showingSaveAlert = true
+                case .notDetermined:
+                    saveAlertMessage = "Photo library access not determined."
+                    showingSaveAlert = true
+                @unknown default:
+                    saveAlertMessage = "Unknown error occurred."
+                    showingSaveAlert = true
+                }
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -218,7 +232,13 @@ struct ImageDetailView: View {
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        saveToPhotoLibrary(aiImage.image)
+                    }) {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                    
                     Button(action: {
                         onShare(aiImage.image)
                         dismiss()
@@ -226,6 +246,11 @@ struct ImageDetailView: View {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
+            }
+            .alert("Photo Library", isPresented: $showingSaveAlert) {
+                Button("OK") { }
+            } message: {
+                Text(saveAlertMessage)
             }
         }
     }
