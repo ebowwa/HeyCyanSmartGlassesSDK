@@ -117,6 +117,104 @@ The HeyCyan glasses include microphone functionality with two distinct modes:
 - For phone-based recording: Use AVAudioRecorder with the glasses selected as the audio input
 - For glasses storage recording: Call `bluetoothManager.toggleAudioRecording()` to start/stop internal recording
 
+### Speech Recognition
+
+The framework includes a `SpeechRecognitionManager` class that enables speech-to-text transcription using the glasses' microphone:
+
+- **Real-time Transcription**: Converts speech from the glasses' mic to text in real-time
+- **Multi-language Support**: Supports multiple languages including English, Spanish, French, and more
+- **Continuous Recognition**: Can run continuously with automatic restart after silence
+- **Glasses Integration**: Automatically detects and uses the glasses' Bluetooth HFP microphone when connected (verified to use "M01_9FD8 (BluetoothHFP)")
+- **Automatic Input Selection**: If glasses are connected but not the active input, the manager will automatically switch to the glasses' microphone
+
+**Usage Example**:
+```swift
+let speechManager = SpeechRecognitionManager()
+
+// Request authorization
+speechManager.requestAuthorization { authorized in
+    if authorized {
+        // Set up handlers
+        speechManager.onTranscriptionUpdate = { partial in
+            print("Partial: \(partial)")
+        }
+        
+        speechManager.onFinalTranscription = { final in
+            print("Final: \(final)")
+        }
+        
+        // Start recognition
+        try? speechManager.startRecognition()
+    }
+}
+```
+
+**Verified Behavior**: 
+- Testing confirms the speech recognition correctly uses the glasses' microphone (not the phone's built-in mic)
+- The glasses appear as "M01_9FD8 (BluetoothHFP)" in the audio input route
+- Speech captured through the glasses is successfully transcribed to text
+
+**Important**: Requires adding `NSSpeechRecognitionUsageDescription` to your app's Info.plist
+
+### Built-in Voice Detection ("Hey Cyan")
+
+The HeyCyan glasses include built-in voice detection capabilities that operate independently from iOS:
+
+- **Voice Wakeup**: The glasses have a built-in "Hey Cyan" wake phrase detection system
+- **Always Listening**: When enabled, the glasses continuously listen for the wake phrase without phone interaction
+- **Wearing Detection**: The glasses can detect when they're being worn to optimize voice detection
+- **Full Control**: Both features can be enabled/disabled programmatically through the SDK
+
+**Controlling Voice Wakeup**:
+```swift
+// Check current status
+bluetoothManager.getVoiceWakeupStatus { enabled in
+    print("Voice wakeup is \(enabled ? "enabled" : "disabled")")
+}
+
+// Enable or disable voice wakeup
+bluetoothManager.setVoiceWakeup(enabled: true) { success in
+    if success {
+        print("Voice wakeup enabled - glasses will listen for 'Hey Cyan'")
+    }
+}
+
+bluetoothManager.setVoiceWakeup(enabled: false) { success in
+    if success {
+        print("Voice wakeup disabled - glasses will not respond to 'Hey Cyan'")
+    }
+}
+```
+
+**Controlling Wearing Detection**:
+```swift
+// Check current status
+bluetoothManager.getWearingDetectionStatus { enabled in
+    print("Wearing detection is \(enabled ? "enabled" : "disabled")")
+}
+
+// Note: setWearingDetection() would need to be added to BluetoothManager
+// The QCSDK supports it via QCSDKCmdCreator.setWearingDetection()
+```
+
+**AI Speak Modes**:
+```swift
+// Control AI speaking functionality
+bluetoothManager.setAISpeakMode(.start) { success in
+    // Start AI speaking
+}
+
+bluetoothManager.setAISpeakMode(.stop) { success in
+    // Stop AI speaking
+}
+```
+
+**Verified Status** (Testing Results):
+- ✅ Voice Wakeup: **ENABLED** and **CONTROLLABLE** - Can be toggled on/off
+- ✅ Wearing Detection: **ENABLED** - Glasses can detect wearing status
+- ✅ Both features operate independently from iOS and run directly on the glasses
+- ✅ The SDK provides full control over these features
+
 ### Device Information
 
 - ``BluetoothManager/getVersionInfo()``

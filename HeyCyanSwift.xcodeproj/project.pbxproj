@@ -622,9 +622,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio through your HeyCyan glasses";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app saves AI-generated images from your glasses to your photo library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app saves AI-generated images from your glasses to your photo library.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio through your HeyCyan glasses";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to transcribe audio from your HeyCyan glasses";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -660,9 +661,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio through your HeyCyan glasses";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This app saves AI-generated images from your glasses to your photo library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app saves AI-generated images from your glasses to your photo library.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio through your HeyCyan glasses";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to transcribe audio from your HeyCyan glasses";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

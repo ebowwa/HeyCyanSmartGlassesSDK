@@ -503,6 +503,17 @@ extension BluetoothManager: QCSDKManagerDelegate {
         }
     }
     
+    public func setVoiceWakeup(enabled: Bool, completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.setVoiceWakeup(enabled) { success, error, result in
+            if success {
+                print("✅ Voice wakeup \(enabled ? "enabled" : "disabled") successfully")
+            } else {
+                print("❌ Failed to set voice wakeup: \(error?.localizedDescription ?? "Unknown error")")
+            }
+            completion(success)
+        }
+    }
+    
     public func getWearingDetectionStatus(completion: @escaping (Bool) -> Void) {
         QCSDKCmdCreator.getWearingDetection { success, error, status in
             if success, let wearingEnabled = status as? Bool {
@@ -510,6 +521,17 @@ extension BluetoothManager: QCSDKManagerDelegate {
             } else {
                 completion(false)
             }
+        }
+    }
+    
+    public func setWearingDetection(enabled: Bool, completion: @escaping (Bool) -> Void) {
+        QCSDKCmdCreator.setWearingDetection(enabled) { success, error, result in
+            if success {
+                print("✅ Wearing detection \(enabled ? "enabled" : "disabled") successfully")
+            } else {
+                print("❌ Failed to set wearing detection: \(error?.localizedDescription ?? "Unknown error")")
+            }
+            completion(success)
         }
     }
     
