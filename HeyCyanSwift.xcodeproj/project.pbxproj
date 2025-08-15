@@ -1,0 +1,608 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		763803FD2E4EFC4100F42622 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; };
+		763803FE2E4EFC4100F42622 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 763803FC2E4EFC4100F42622 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		763803AC2E4EFA8700F42622 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 763803962E4EFA8500F42622 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7638039D2E4EFA8500F42622;
+			remoteInfo = HeyCyanSwift;
+		};
+		763803B62E4EFA8700F42622 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 763803962E4EFA8500F42622 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7638039D2E4EFA8500F42622;
+			remoteInfo = HeyCyanSwift;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		763803FF2E4EFC4100F42622 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				763803FE2E4EFC4100F42622 /* QCSDK.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7638039E2E4EFA8500F42622 /* HeyCyanSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeyCyanSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		763803AB2E4EFA8700F42622 /* HeyCyanSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeyCyanSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		763803B52E4EFA8700F42622 /* HeyCyanSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeyCyanSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		763803FC2E4EFC4100F42622 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		763803A02E4EFA8500F42622 /* HeyCyanSwift */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HeyCyanSwift;
+			sourceTree = "<group>";
+		};
+		763803AE2E4EFA8700F42622 /* HeyCyanSwiftTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HeyCyanSwiftTests;
+			sourceTree = "<group>";
+		};
+		763803B82E4EFA8700F42622 /* HeyCyanSwiftUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HeyCyanSwiftUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7638039B2E4EFA8500F42622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				763803FD2E4EFC4100F42622 /* QCSDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803A82E4EFA8700F42622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803B22E4EFA8700F42622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		763803952E4EFA8500F42622 = {
+			isa = PBXGroup;
+			children = (
+				763803A02E4EFA8500F42622 /* HeyCyanSwift */,
+				763803AE2E4EFA8700F42622 /* HeyCyanSwiftTests */,
+				763803B82E4EFA8700F42622 /* HeyCyanSwiftUITests */,
+				763803FB2E4EFC4100F42622 /* Frameworks */,
+				7638039F2E4EFA8500F42622 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7638039F2E4EFA8500F42622 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7638039E2E4EFA8500F42622 /* HeyCyanSwift.app */,
+				763803AB2E4EFA8700F42622 /* HeyCyanSwiftTests.xctest */,
+				763803B52E4EFA8700F42622 /* HeyCyanSwiftUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		763803FB2E4EFC4100F42622 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				763803FC2E4EFC4100F42622 /* QCSDK.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7638039D2E4EFA8500F42622 /* HeyCyanSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 763803BF2E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwift" */;
+			buildPhases = (
+				7638039A2E4EFA8500F42622 /* Sources */,
+				7638039B2E4EFA8500F42622 /* Frameworks */,
+				7638039C2E4EFA8500F42622 /* Resources */,
+				763803FF2E4EFC4100F42622 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				763803A02E4EFA8500F42622 /* HeyCyanSwift */,
+			);
+			name = HeyCyanSwift;
+			packageProductDependencies = (
+			);
+			productName = HeyCyanSwift;
+			productReference = 7638039E2E4EFA8500F42622 /* HeyCyanSwift.app */;
+			productType = "com.apple.product-type.application";
+		};
+		763803AA2E4EFA8700F42622 /* HeyCyanSwiftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 763803C22E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwiftTests" */;
+			buildPhases = (
+				763803A72E4EFA8700F42622 /* Sources */,
+				763803A82E4EFA8700F42622 /* Frameworks */,
+				763803A92E4EFA8700F42622 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				763803AD2E4EFA8700F42622 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				763803AE2E4EFA8700F42622 /* HeyCyanSwiftTests */,
+			);
+			name = HeyCyanSwiftTests;
+			packageProductDependencies = (
+			);
+			productName = HeyCyanSwiftTests;
+			productReference = 763803AB2E4EFA8700F42622 /* HeyCyanSwiftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		763803B42E4EFA8700F42622 /* HeyCyanSwiftUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 763803C52E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwiftUITests" */;
+			buildPhases = (
+				763803B12E4EFA8700F42622 /* Sources */,
+				763803B22E4EFA8700F42622 /* Frameworks */,
+				763803B32E4EFA8700F42622 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				763803B72E4EFA8700F42622 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				763803B82E4EFA8700F42622 /* HeyCyanSwiftUITests */,
+			);
+			name = HeyCyanSwiftUITests;
+			packageProductDependencies = (
+			);
+			productName = HeyCyanSwiftUITests;
+			productReference = 763803B52E4EFA8700F42622 /* HeyCyanSwiftUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		763803962E4EFA8500F42622 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					7638039D2E4EFA8500F42622 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					763803AA2E4EFA8700F42622 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 7638039D2E4EFA8500F42622;
+					};
+					763803B42E4EFA8700F42622 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 7638039D2E4EFA8500F42622;
+					};
+				};
+			};
+			buildConfigurationList = 763803992E4EFA8500F42622 /* Build configuration list for PBXProject "HeyCyanSwift" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 763803952E4EFA8500F42622;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7638039F2E4EFA8500F42622 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7638039D2E4EFA8500F42622 /* HeyCyanSwift */,
+				763803AA2E4EFA8700F42622 /* HeyCyanSwiftTests */,
+				763803B42E4EFA8700F42622 /* HeyCyanSwiftUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7638039C2E4EFA8500F42622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803A92E4EFA8700F42622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803B32E4EFA8700F42622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7638039A2E4EFA8500F42622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803A72E4EFA8700F42622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		763803B12E4EFA8700F42622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		763803AD2E4EFA8700F42622 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7638039D2E4EFA8500F42622 /* HeyCyanSwift */;
+			targetProxy = 763803AC2E4EFA8700F42622 /* PBXContainerItemProxy */;
+		};
+		763803B72E4EFA8700F42622 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7638039D2E4EFA8500F42622 /* HeyCyanSwift */;
+			targetProxy = 763803B62E4EFA8700F42622 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		763803BD2E4EFA8700F42622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		763803BE2E4EFA8700F42622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		763803C02E4EFA8700F42622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "HeyCyanSwift/HeyCyanSwift-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		763803C12E4EFA8700F42622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth to connect to HeyCyan Glasses";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth to communicate with HeyCyan Glasses";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "HeyCyanSwift/HeyCyanSwift-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		763803C32E4EFA8700F42622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwiftTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeyCyanSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeyCyanSwift";
+			};
+			name = Debug;
+		};
+		763803C42E4EFA8700F42622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwiftTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HeyCyanSwift.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HeyCyanSwift";
+			};
+			name = Release;
+		};
+		763803C62E4EFA8700F42622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwiftUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HeyCyanSwift;
+			};
+			name = Debug;
+		};
+		763803C72E4EFA8700F42622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42R8ZPM5N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ebowwa.HeyCyanSwiftUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HeyCyanSwift;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		763803992E4EFA8500F42622 /* Build configuration list for PBXProject "HeyCyanSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				763803BD2E4EFA8700F42622 /* Debug */,
+				763803BE2E4EFA8700F42622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		763803BF2E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				763803C02E4EFA8700F42622 /* Debug */,
+				763803C12E4EFA8700F42622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		763803C22E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwiftTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				763803C32E4EFA8700F42622 /* Debug */,
+				763803C42E4EFA8700F42622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		763803C52E4EFA8700F42622 /* Build configuration list for PBXNativeTarget "HeyCyanSwiftUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				763803C62E4EFA8700F42622 /* Debug */,
+				763803C72E4EFA8700F42622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 763803962E4EFA8500F42622 /* Project object */;
+}
