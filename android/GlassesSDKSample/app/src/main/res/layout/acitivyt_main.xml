@@ -9,44 +9,43 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/qc_dp_80"
-        >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_marginTop="@dimen/qc_dp_80">
 
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_1"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_2"
-            />
-        <Button
-            android:id="@+id/btn_disconnect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_3"
-            />
-        <Button
-            android:id="@+id/btn_add_listener"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_11"
-            />
+            <Button
+                android:id="@+id/btn_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_1" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/btn_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_2" />
+
+            <Button
+                android:id="@+id/btn_disconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_3" />
+
+            <Button
+                android:id="@+id/btn_add_listener"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_11" />
+
+        </LinearLayout>
     </HorizontalScrollView>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -55,72 +54,70 @@
                 android:id="@+id/btn_set_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_4"
-                />
+                android:text="@string/text_4" />
 
             <Button
                 android:id="@+id/btn_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_5"
-                />
+                android:text="@string/text_5" />
+
             <Button
                 android:id="@+id/btn_camera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_6"
-                />
+                android:text="@string/text_6" />
+
             <Button
                 android:id="@+id/btn_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_7"
-                />
+                android:text="@string/text_7" />
 
-            <Button
-                android:id="@+id/btn_record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_8"
-                />
-
-
-            <Button
-                android:id="@+id/btn_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_9"
-                />
-
-            <Button
-                android:id="@+id/btn_bt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_10"
-                />
-
-            <Button
-                android:id="@+id/btn_battery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_10"
-                />
-
-            <Button
-                android:id="@+id/btn_volume"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_13"
-                />
-
-            <Button
-                android:id="@+id/btn_media_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_14"
-                />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/btn_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_8" />
+
+    <Button
+        android:id="@+id/btn_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_9" />
+
+    <Button
+        android:id="@+id/btn_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_10" />
+
+    <Button
+        android:id="@+id/btn_battery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_12" />
+
+    <Button
+        android:id="@+id/btn_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_13" />
+
+    <Button
+        android:id="@+id/btn_media_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_14" />
+
+    <Button
+        android:id="@+id/btn_data_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_15" />
 
 </LinearLayout>

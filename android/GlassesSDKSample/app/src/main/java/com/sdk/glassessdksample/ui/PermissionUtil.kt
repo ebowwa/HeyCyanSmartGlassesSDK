@@ -149,6 +149,21 @@ fun requestAlertWindowPermission(activity: FragmentActivity) {
     XXPermissions.with(activity).permission(Permission.SYSTEM_ALERT_WINDOW)
 }
 
+fun requestNearbyWifiDevicesPermission(
+    activity: FragmentActivity,
+    requestCallback: OnPermissionCallback
+) {
+    XXPermissions.with(activity)
+        .permission(Permission.NEARBY_WIFI_DEVICES)
+        .request(requestCallback)
+}
+
+fun hasNearbyWifiDevicesPermission(
+    activity: FragmentActivity
+): Boolean {
+    return XXPermissions.isGranted(activity, Permission.NEARBY_WIFI_DEVICES)
+}
+
 
 fun requestAllPermission(
     activity: FragmentActivity,

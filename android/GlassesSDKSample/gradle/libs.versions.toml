@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.0"
+agp = "8.12.1"
 kotlin = "1.8.0"
 coreKtx = "1.16.0"
 junit = "4.14-SNAPSHOT"

@@ -1,4 +1,4 @@
-package com.sdk.glassessdksample.ui;
+package com.sdk.glassessdksample.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle

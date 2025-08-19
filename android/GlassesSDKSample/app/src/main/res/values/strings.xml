@@ -15,4 +15,5 @@
     <string name="text_12">电量</string>
     <string name="text_13">音量读取</string>
     <string name="text_14">读取眼镜媒体的数量</string>
+    <string name="text_15">BLE+WiFi P2P数据下载</string>
 </resources>
