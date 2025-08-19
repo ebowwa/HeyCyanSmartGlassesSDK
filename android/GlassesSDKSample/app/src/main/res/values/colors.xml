@@ -21,4 +21,9 @@
     <color name="title_bar_center">#2F2E41</color>
     <color name="title_bar_right">#FF6A00</color>
     <color name="title_bar_line">#ededed</color>
+    
+    <!-- Signal strength colors -->
+    <color name="signal_weak">#FFE53935</color>
+    <color name="signal_medium">#FFFF9800</color>
+    <color name="signal_strong">#FF4CAF50</color>
 </resources>

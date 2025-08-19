@@ -3,6 +3,7 @@ package com.sdk.glassessdksample
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,6 +12,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import java.io.File
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 import com.oudmon.ble.base.bluetooth.BleOperateManager
@@ -33,10 +35,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: AcitivytMainBinding
     private val deviceNotifyListener by lazy { MyDeviceNotifyListener() }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AcitivytMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         initView()
     }
     inner class PermissionCallback : OnPermissionCallback {
@@ -114,7 +118,11 @@ class MainActivity : AppCompatActivity() {
             binding.btnBt,
             binding.btnBattery,
             binding.btnVolume,
-            binding.btnMediaCount
+            binding.btnMediaCount,
+            binding.btnWifi,
+            binding.btnP2p,
+            binding.btnDownload,
+            binding.btnReconnect
         ) {
             when (this) {
                 binding.btnScan -> {
@@ -345,6 +353,38 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                binding.btnDownload -> {
+                    // Trigger media config download
+                    Log.i("MainActivity", "Starting media config download...")
+                    
+                    // Check if device is connected
+                    if (!BleOperateManager.getInstance().isConnected) {
+                        Log.w("MainActivity", "Device not connected, cannot download media")
+                        return@setOnClickListener
+                    }
+                    
+                    // Get device IP from DeviceManager (if available)
+                    val deviceIP = DeviceManager.getInstance().deviceAddress
+                    if (deviceIP.isNullOrEmpty()) {
+                        Log.w("MainActivity", "Device IP not available")
+                        return@setOnClickListener
+                    }
+                    
+                    // Build media.config URL and trigger download
+                    val mediaConfigUrl = "http://$deviceIP/files/media.config"
+                    Log.i("MainActivity", "Media config URL: $mediaConfigUrl")
+                    
+                    // For now, just log the URL. In a full implementation, you would:
+                    // 1. Download the media.config file
+                    // 2. Parse the file to get list of media files
+                    // 3. Download each media file
+                    
+                    // You can integrate with the existing AlbumDepository here:
+                    // val albumDepository = AlbumDepository()
+                    // albumDepository.getPhotoTextFile(mediaConfigUrl, downloadPath, "media.config")
+                }
+
             }
         }
     }
@@ -442,5 +482,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

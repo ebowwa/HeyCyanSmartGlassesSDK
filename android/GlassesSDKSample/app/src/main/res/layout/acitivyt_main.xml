@@ -77,50 +77,68 @@
                 android:text="@string/text_7"
                 />
 
-            <Button
-                android:id="@+id/btn_record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_8"
-                />
-
-
-            <Button
-                android:id="@+id/btn_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_9"
-                />
-
-            <Button
-                android:id="@+id/btn_bt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_10"
-                />
-
-            <Button
-                android:id="@+id/btn_battery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_10"
-                />
-
-            <Button
-                android:id="@+id/btn_volume"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_13"
-                />
-
-            <Button
-                android:id="@+id/btn_media_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_14"
-                />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/btn_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_8" />
+
+    <Button
+        android:id="@+id/btn_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_9" />
+
+    <Button
+        android:id="@+id/btn_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_10" />
+
+    <Button
+        android:id="@+id/btn_battery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_10" />
+
+    <Button
+        android:id="@+id/btn_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_13" />
+
+    <Button
+        android:id="@+id/btn_media_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_14" />
+
+    <Button
+        android:id="@+id/btn_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WiFi连接" />
+
+    <Button
+        android:id="@+id/btn_p2p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WiFi P2P" />
+
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="媒体下载" />
+
+    <Button
+        android:id="@+id/btn_reconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="重连BLE" />
 
 </LinearLayout>
