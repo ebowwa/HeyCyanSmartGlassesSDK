@@ -6,7 +6,6 @@ Comprehensive SDKs for controlling HeyCyan smart glasses via Bluetooth Low Energ
 
 - **iOS**: Full SDK available with demo application (see `ios/` directory)
 - **Android**: Full SDK available with demo application (see `android/` directory)
-- **Python**: Cross-platform SDK with async/await API (see `python/` directory)
 
 ## Overview
 
@@ -30,33 +29,6 @@ This repository provides SDKs for developers to integrate HeyCyan smart glasses 
 - **Media Counts**: Track number of photos, videos, and audio files on device
 - **Time Synchronization**: Set device time to match iOS device
 
-## Project Structure
-
-```
-HeyCyanGlassesSDK/
-├── ios/                      # iOS SDK
-│   ├── QCSDK.framework/      # Core SDK framework
-│   │   ├── Headers/          # Public SDK headers
-│   │   │   ├── QCSDK.h      # Main SDK header
-│   │   │   ├── QCSDKManager.h # Device management
-│   │   │   ├── QCSDKCmdCreator.h # Command creation utilities
-│   │   │   └── ...
-│   │   └── Info.plist
-│   ├── QCSDKDemo/           # Demo application
-│   │   ├── AppDelegate.*    # App lifecycle
-│   │   ├── ViewController.* # Main features demo
-│   │   ├── QCScanViewController.* # Device scanning
-│   │   └── QCCentralManager.* # BLE connection management
-│   └── QCSDKDemo.xcodeproj  # Xcode project file
-├── android/                  # Android SDK
-│   ├── glasses_sdk_*.aar     # Android SDK library
-│   ├── GlassesSDKSample/     # Sample application
-│   └── Android_SDK_Development_Guide_CN.pdf
-└── python/                   # Python SDK
-    ├── heycyan_sdk/          # SDK package
-    ├── examples/             # Example scripts
-    └── README.md             # Python documentation
-```
 
 ## Requirements
 
