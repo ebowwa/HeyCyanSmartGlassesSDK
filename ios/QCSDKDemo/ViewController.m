@@ -6,12 +6,15 @@
 //
 
 #import "ViewController.h"
+#import <NetworkExtension/NetworkExtension.h>
 #import <QCSDK/QCVersionHelper.h>
 #import <QCSDK/QCSDKManager.h>
 #import <QCSDK/QCSDKCmdCreator.h>
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
+
+static NSString *const QGDownloadErrorDomain = @"com.heycyan.qcsdkdemo.download";
 
 typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     /// Get hardware version, firmware version, and WiFi firmware versions
@@ -37,6 +40,9 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     
     /// Take AI Image
     QGDeviceActionTypeToggleTakeAIImage,
+
+    /// Download media over Wi-Fi
+    QGDeviceActionTypeDownloadMedia,
 
     /// Reserved for future use
     QGDeviceActionTypeReserved,
@@ -67,6 +73,9 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 @property(nonatomic,assign)BOOL recordingAudio;
 
 @property(nonatomic,strong)NSData *aiImageData;
+@property(nonatomic,assign)BOOL downloadingMedia;
+@property(nonatomic,copy)NSString *downloadStatusMessage;
+@property(nonatomic,copy)NSString *currentDownloadSSID;
 @end
 
 @implementation ViewController
@@ -328,6 +337,7 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     cell.detailTextLabel.numberOfLines = 0;
     cell.detailTextLabel.lineBreakMode = NSLineBreakByWordWrapping;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.imageView.image = nil;
     
     switch ((QGDeviceActionType)indexPath.row) {
         case QGDeviceActionTypeGetVersion:
@@ -360,6 +370,11 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
             if (self.aiImageData) {
                 cell.imageView.image = [UIImage imageWithData:self.aiImageData];
             }
+            break;
+        case QGDeviceActionTypeDownloadMedia:
+            cell.textLabel.text = @"Download Media Over Wi-Fi";
+            cell.detailTextLabel.text = self.downloadStatusMessage ?: @"Tap to download the latest media files over the device Wi-Fi.";
+            break;
         case QGDeviceActionTypeReserved:
             break;
         default:
@@ -398,11 +413,336 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         case QGDeviceActionTypeToggleTakeAIImage:
             [self takeAIImage];
             break;
+        case QGDeviceActionTypeDownloadMedia:
+            [self downloadMediaOverWiFi];
+            break;
         case QGDeviceActionTypeReserved:
         default:
             break;
     }
 
+}
+
+#pragma mark - Wi-Fi Media Download
+
+- (void)downloadMediaOverWiFi {
+    if (self.downloadingMedia) {
+        [self updateDownloadStatus:@"Media transfer already in progress..."];
+        return;
+    }
+
+    self.downloadingMedia = YES;
+    [self updateDownloadStatus:@"Preparing Wi-Fi transfer..."];
+
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) {
+            return;
+        }
+        [strongSelf handleMediaDownloadWorkflow];
+    });
+}
+
+- (void)handleMediaDownloadWorkflow {
+    static NSTimeInterval const QGDeviceWiFiCommandTimeout = 15.0;
+    static NSTimeInterval const QGDeviceHTTPRequestTimeout = 45.0;
+
+    [self updateDownloadStatus:@"Requesting device Wi-Fi credentials..."];
+
+    __block NSString *ssid = nil;
+    __block NSString *password = nil;
+    __block NSInteger wifiErrorCode = 0;
+
+    dispatch_semaphore_t wifiSem = dispatch_semaphore_create(0);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [QCSDKCmdCreator openWifiWithMode:QCOperatorDeviceModeTransfer success:^(NSString * _Nonnull wifiSSID, NSString * _Nonnull wifiPassword) {
+            ssid = wifiSSID;
+            password = wifiPassword;
+            dispatch_semaphore_signal(wifiSem);
+        } fail:^(NSInteger errorCode) {
+            wifiErrorCode = errorCode;
+            dispatch_semaphore_signal(wifiSem);
+        }];
+    });
+
+    if (dispatch_semaphore_wait(wifiSem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(QGDeviceWiFiCommandTimeout * NSEC_PER_SEC))) != 0 || ssid.length == 0) {
+        NSString *message = ssid.length == 0 ? [NSString stringWithFormat:@"Failed to open device Wi-Fi (code %ld).", (long)wifiErrorCode] : @"Timed out while requesting Wi-Fi credentials.";
+        [self completeMediaDownloadWithMessage:message ssid:nil success:NO];
+        return;
+    }
+
+    self.currentDownloadSSID = ssid;
+    [self updateDownloadStatus:[NSString stringWithFormat:@"Connecting to %@...", ssid]];
+
+    NEHotspotConfiguration *configuration = nil;
+    if (password.length > 0) {
+        configuration = [[NEHotspotConfiguration alloc] initWithSSID:ssid passphrase:password isWEP:NO];
+    } else {
+        configuration = [[NEHotspotConfiguration alloc] initWithSSID:ssid];
+    }
+    configuration.joinOnce = YES;
+
+    __block NSError *hotspotError = nil;
+    dispatch_semaphore_t hotspotSem = dispatch_semaphore_create(0);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NEHotspotConfigurationManager sharedManager] applyConfiguration:configuration completionHandler:^(NSError * _Nullable error) {
+            hotspotError = error;
+            dispatch_semaphore_signal(hotspotSem);
+        }];
+    });
+
+    if (dispatch_semaphore_wait(hotspotSem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(QGDeviceWiFiCommandTimeout * NSEC_PER_SEC))) != 0) {
+        [self completeMediaDownloadWithMessage:@"Timed out while joining device Wi-Fi network." ssid:ssid success:NO];
+        return;
+    }
+
+    if (hotspotError && !([hotspotError.domain isEqualToString:NEHotspotConfigurationErrorDomain] && hotspotError.code == NEHotspotConfigurationErrorAlreadyAssociated)) {
+        NSString *message = [NSString stringWithFormat:@"Unable to join device Wi-Fi: %@", hotspotError.localizedDescription];
+        [self completeMediaDownloadWithMessage:message ssid:ssid success:NO];
+        return;
+    }
+
+    [self updateDownloadStatus:@"Fetching device IP address..."];
+
+    __block NSString *deviceIP = nil;
+    dispatch_semaphore_t ipSem = dispatch_semaphore_create(0);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [QCSDKCmdCreator getDeviceWifiIPSuccess:^(NSString * _Nullable ipAddress) {
+            deviceIP = ipAddress;
+            dispatch_semaphore_signal(ipSem);
+        } failed:^{
+            dispatch_semaphore_signal(ipSem);
+        }];
+    });
+
+    if (dispatch_semaphore_wait(ipSem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(QGDeviceWiFiCommandTimeout * NSEC_PER_SEC))) != 0 || deviceIP.length == 0) {
+        [self completeMediaDownloadWithMessage:@"Failed to obtain device IP address." ssid:ssid success:NO];
+        return;
+    }
+
+    NSString *configURLString = [NSString stringWithFormat:@"http://%@/files/media.config", deviceIP];
+    NSURL *configURL = [NSURL URLWithString:configURLString];
+    if (!configURL) {
+        [self completeMediaDownloadWithMessage:@"Invalid media configuration URL." ssid:ssid success:NO];
+        return;
+    }
+
+    [self updateDownloadStatus:@"Downloading media manifest..."];
+
+    NSError *configError = nil;
+    NSData *configData = [self fetchDataSynchronouslyWithURL:configURL timeout:QGDeviceHTTPRequestTimeout error:&configError];
+    if (!configData) {
+        NSString *message = configError ? configError.localizedDescription : @"Unable to download media manifest.";
+        [self completeMediaDownloadWithMessage:message ssid:ssid success:NO];
+        return;
+    }
+
+    NSError *parseError = nil;
+    NSArray<NSString *> *mediaFiles = [self mediaFileNamesFromConfigData:configData error:&parseError];
+    NSMutableArray<NSString *> *normalizedFileNames = [NSMutableArray array];
+    for (NSString *fileName in mediaFiles) {
+        NSString *trimmed = [fileName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if (trimmed.length > 0) {
+            [normalizedFileNames addObject:trimmed];
+        }
+    }
+
+    if (normalizedFileNames.count == 0) {
+        if (parseError) {
+            [self completeMediaDownloadWithMessage:parseError.localizedDescription ssid:ssid success:NO];
+        } else {
+            [self completeMediaDownloadWithMessage:@"No media files available for download." ssid:ssid success:YES];
+        }
+        return;
+    }
+
+    NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *mediaDirectory = [documentsPath stringByAppendingPathComponent:@"GlassesMedia"];
+    NSError *directoryError = nil;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:mediaDirectory withIntermediateDirectories:YES attributes:nil error:&directoryError]) {
+        NSString *message = [NSString stringWithFormat:@"Unable to create media directory: %@", directoryError.localizedDescription];
+        [self completeMediaDownloadWithMessage:message ssid:ssid success:NO];
+        return;
+    }
+
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfiguration.timeoutIntervalForRequest = QGDeviceHTTPRequestTimeout;
+    sessionConfiguration.timeoutIntervalForResource = QGDeviceHTTPRequestTimeout * 2;
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+
+    NSError *downloadError = nil;
+    NSUInteger completedCount = 0;
+    for (NSString *trimmedName in normalizedFileNames) {
+        completedCount++;
+        NSString *status = [NSString stringWithFormat:@"Downloading %lu/%lu: %@", (unsigned long)completedCount, (unsigned long)normalizedFileNames.count, trimmedName];
+        [self updateDownloadStatus:status];
+
+        NSString *encodedFileName = [trimmedName stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+        NSString *fileURLString = [NSString stringWithFormat:@"http://%@/files/%@", deviceIP, encodedFileName];
+        NSURL *fileURL = [NSURL URLWithString:fileURLString];
+        if (!fileURL) {
+            downloadError = [NSError errorWithDomain:QGDownloadErrorDomain code:-2 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid file URL for %@", trimmedName]}];
+            break;
+        }
+
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:fileURL];
+        request.timeoutInterval = QGDeviceHTTPRequestTimeout;
+        NSData *fileData = [self fetchDataSynchronouslyWithRequest:request session:session timeout:QGDeviceHTTPRequestTimeout error:&downloadError];
+        if (!fileData) {
+            break;
+        }
+
+        NSString *destinationPath = [mediaDirectory stringByAppendingPathComponent:trimmedName.lastPathComponent];
+        NSURL *destinationURL = [NSURL fileURLWithPath:destinationPath];
+        [[NSFileManager defaultManager] removeItemAtURL:destinationURL error:nil];
+        if (![fileData writeToURL:destinationURL options:NSDataWritingAtomic error:&downloadError]) {
+            break;
+        }
+
+        NSString *savedStatus = [NSString stringWithFormat:@"Saved %@ (%lu/%lu)", destinationURL.lastPathComponent, (unsigned long)completedCount, (unsigned long)normalizedFileNames.count];
+        [self updateDownloadStatus:savedStatus];
+    }
+
+    [session finishTasksAndInvalidate];
+
+    if (downloadError) {
+        NSString *message = [NSString stringWithFormat:@"Download failed: %@", downloadError.localizedDescription ?: @"Unknown error"];
+        [self completeMediaDownloadWithMessage:message ssid:ssid success:NO];
+        return;
+    }
+
+    [self completeMediaDownloadWithMessage:@"Media transfer completed successfully." ssid:ssid success:YES];
+}
+
+- (NSData *)fetchDataSynchronouslyWithURL:(NSURL *)url timeout:(NSTimeInterval)timeout error:(NSError **)error {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.timeoutInterval = timeout;
+    return [self fetchDataSynchronouslyWithRequest:request session:[NSURLSession sharedSession] timeout:timeout error:error];
+}
+
+- (NSData *)fetchDataSynchronouslyWithRequest:(NSURLRequest *)request session:(NSURLSession *)session timeout:(NSTimeInterval)timeout error:(NSError **)error {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    __block NSData *resultData = nil;
+    __block NSURLResponse *response = nil;
+    __block NSError *responseError = nil;
+
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable resp, NSError * _Nullable err) {
+        resultData = data;
+        response = resp;
+        responseError = err;
+        dispatch_semaphore_signal(sem);
+    }];
+
+    [task resume];
+
+    if (dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC))) != 0) {
+        [task cancel];
+        if (error) {
+            *error = [NSError errorWithDomain:QGDownloadErrorDomain code:-1001 userInfo:@{NSLocalizedDescriptionKey: @"Request timed out."}];
+        }
+        return nil;
+    }
+
+    if (responseError) {
+        if (error) {
+            *error = responseError;
+        }
+        return nil;
+    }
+
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
+        if (statusCode < 200 || statusCode >= 300) {
+            if (error) {
+                NSString *message = [NSString stringWithFormat:@"HTTP %ld", (long)statusCode];
+                *error = [NSError errorWithDomain:QGDownloadErrorDomain code:statusCode userInfo:@{NSLocalizedDescriptionKey: message}];
+            }
+            return nil;
+        }
+    }
+
+    if (!resultData) {
+        if (error) {
+            *error = [NSError errorWithDomain:QGDownloadErrorDomain code:-1002 userInfo:@{NSLocalizedDescriptionKey: @"No data received."}];
+        }
+        return nil;
+    }
+
+    return resultData;
+}
+
+- (NSArray<NSString *> *)mediaFileNamesFromConfigData:(NSData *)configData error:(NSError **)error {
+    if (!configData) {
+        if (error) {
+            *error = [NSError errorWithDomain:QGDownloadErrorDomain code:-2000 userInfo:@{NSLocalizedDescriptionKey: @"Missing media configuration data."}];
+        }
+        return @[];
+    }
+
+    NSMutableArray<NSString *> *filenames = [NSMutableArray array];
+    NSError *jsonError = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:configData options:0 error:&jsonError];
+    if (!jsonError && jsonObject) {
+        if ([jsonObject isKindOfClass:[NSArray class]]) {
+            for (id entry in (NSArray *)jsonObject) {
+                if ([entry isKindOfClass:[NSString class]]) {
+                    [filenames addObject:(NSString *)entry];
+                }
+            }
+        } else if ([jsonObject isKindOfClass:[NSDictionary class]]) {
+            id filesValue = jsonObject[@"files"] ?: jsonObject[@"media"] ?: jsonObject[@"items"];
+            if ([filesValue isKindOfClass:[NSArray class]]) {
+                for (id entry in (NSArray *)filesValue) {
+                    if ([entry isKindOfClass:[NSString class]]) {
+                        [filenames addObject:(NSString *)entry];
+                    }
+                }
+            }
+        }
+    }
+
+    if (filenames.count == 0) {
+        NSString *configString = [[NSString alloc] initWithData:configData encoding:NSUTF8StringEncoding];
+        if (configString.length > 0) {
+            [configString enumerateLinesUsingBlock:^(NSString * _Nonnull line, BOOL * _Nonnull stop) {
+                NSString *trimmed = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                if (trimmed.length > 0 && ![trimmed hasPrefix:@"#"]) {
+                    [filenames addObject:trimmed];
+                }
+            }];
+        }
+    }
+
+    if (filenames.count == 0 && error) {
+        *error = [NSError errorWithDomain:QGDownloadErrorDomain code:-2001 userInfo:@{NSLocalizedDescriptionKey: @"Unable to parse media configuration."}];
+    }
+
+    return filenames;
+}
+
+- (void)completeMediaDownloadWithMessage:(NSString *)message ssid:(NSString *)ssid success:(BOOL)success {
+    [self updateDownloadStatus:message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.downloadingMedia = NO;
+        NSString *targetSSID = ssid.length > 0 ? ssid : self.currentDownloadSSID;
+        if (targetSSID.length > 0) {
+            [[NEHotspotConfigurationManager sharedManager] removeConfigurationForSSID:targetSSID];
+        }
+        self.currentDownloadSSID = nil;
+    });
+}
+
+- (void)updateDownloadStatus:(NSString *)status {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.downloadStatusMessage = status;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:QGDeviceActionTypeDownloadMedia inSection:0];
+        if ([self.tableView numberOfSections] > 0 && indexPath.row < [self.tableView numberOfRowsInSection:0]) {
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        } else {
+            [self.tableView reloadData];
+        }
+    });
 }
 
 @end
