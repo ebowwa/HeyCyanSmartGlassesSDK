@@ -12,6 +12,7 @@
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
+#import "GlassesMediaDownloader.h"
 
 typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     /// Get hardware version, firmware version, and WiFi firmware versions
@@ -38,13 +39,16 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     /// Take AI Image
     QGDeviceActionTypeToggleTakeAIImage,
 
+    /// Download media over Wi-Fi
+    QGDeviceActionTypeDownloadMedia,
+
     /// Reserved for future use
     QGDeviceActionTypeReserved,
 };
 
 
 
-@interface ViewController ()<UITableViewDelegate, UITableViewDataSource,QCCentralManagerDelegate,QCSDKManagerDelegate>
+@interface ViewController ()<UITableViewDelegate, UITableViewDataSource,QCCentralManagerDelegate,QCSDKManagerDelegate, GlassesMediaDownloaderDelegate>
 
 @property(nonatomic,strong)UIBarButtonItem *rightItem;
 @property(nonatomic,strong)UITableView *tableView;
@@ -67,6 +71,11 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 @property(nonatomic,assign)BOOL recordingAudio;
 
 @property(nonatomic,strong)NSData *aiImageData;
+
+@property(nonatomic,strong)GlassesMediaDownloader *mediaDownloader;
+@property(nonatomic,copy)NSString *downloadStatus;
+@property(nonatomic,strong)UIImage *latestDownloadedImage;
+@property(nonatomic,copy)NSString *deviceWiFiIP;
 @end
 
 @implementation ViewController
@@ -91,8 +100,10 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.hidden = YES;
     [self.view addSubview:self.tableView];
-    
+
     [QCSDKManager shareInstance].delegate = self;
+
+    self.downloadStatus = @"Tap to start a Wi-Fi media transfer.";
 }
 
 #pragma mark - Device Data Report
@@ -328,7 +339,10 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     cell.detailTextLabel.numberOfLines = 0;
     cell.detailTextLabel.lineBreakMode = NSLineBreakByWordWrapping;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.detailTextLabel.text = @"";
     
+    cell.imageView.image = nil;
+
     switch ((QGDeviceActionType)indexPath.row) {
         case QGDeviceActionTypeGetVersion:
             cell.textLabel.text = @"Get hard Version & firm Version";
@@ -360,6 +374,12 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
             if (self.aiImageData) {
                 cell.imageView.image = [UIImage imageWithData:self.aiImageData];
             }
+            break;
+        case QGDeviceActionTypeDownloadMedia:
+            cell.textLabel.text = @"Download Media over Wi-Fi";
+            cell.detailTextLabel.text = self.downloadStatus ?: @"Tap to start a Wi-Fi media transfer.";
+            cell.imageView.image = self.latestDownloadedImage;
+            break;
         case QGDeviceActionTypeReserved:
             break;
         default:
@@ -398,11 +418,100 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         case QGDeviceActionTypeToggleTakeAIImage:
             [self takeAIImage];
             break;
+        case QGDeviceActionTypeDownloadMedia:
+            [self downloadMediaOverWiFi];
+            break;
         case QGDeviceActionTypeReserved:
         default:
             break;
     }
 
+}
+
+- (GlassesMediaDownloader *)mediaDownloader {
+    if (!_mediaDownloader) {
+        _mediaDownloader = [[GlassesMediaDownloader alloc] init];
+        _mediaDownloader.delegate = self;
+    }
+    return _mediaDownloader;
+}
+
+- (void)reloadDownloadRow {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:QGDeviceActionTypeDownloadMedia inSection:0];
+    if ([self.tableView numberOfSections] > 0 && indexPath.row < [self.tableView numberOfRowsInSection:indexPath.section]) {
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    }
+}
+
+- (void)downloadMediaOverWiFi {
+    self.downloadStatus = @"Requesting Wi-Fi credentials…";
+    [self reloadDownloadRow];
+
+    __weak typeof(self) weakSelf = self;
+    [QCSDKCmdCreator openWifiWithMode:(QCOperatorDeviceModePhoto) success:^(NSString * _Nonnull ssid, NSString * _Nonnull password) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) { return; }
+            strongSelf.downloadStatus = [NSString stringWithFormat:@"Received Wi-Fi credentials for %@. Fetching device IP…", ssid ?: @"glasses"];
+            [strongSelf reloadDownloadRow];
+        });
+
+        [QCSDKCmdCreator getDeviceWifiIPSuccess:^(NSString * _Nullable deviceIP) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                if (!strongSelf) { return; }
+
+                if (deviceIP.length == 0) {
+                    strongSelf.downloadStatus = @"Device did not provide a Wi-Fi IP address.";
+                    [strongSelf reloadDownloadRow];
+                    return;
+                }
+
+                strongSelf.deviceWiFiIP = deviceIP;
+                strongSelf.downloadStatus = [NSString stringWithFormat:@"Connecting to %@ at %@…", ssid ?: @"glasses", deviceIP];
+                [strongSelf reloadDownloadRow];
+                [[strongSelf mediaDownloader] startDownloadWithSSID:ssid password:password deviceIP:deviceIP];
+            });
+        } failed:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                if (!strongSelf) { return; }
+                strongSelf.downloadStatus = @"Failed to retrieve device Wi-Fi IP.";
+                [strongSelf reloadDownloadRow];
+            });
+        }];
+    } fail:^(NSInteger mode) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) { return; }
+            strongSelf.downloadStatus = [NSString stringWithFormat:@"Failed to open Wi-Fi (mode %ld).", (long)mode];
+            [strongSelf reloadDownloadRow];
+        });
+    }];
+}
+
+#pragma mark - GlassesMediaDownloaderDelegate
+
+- (void)mediaDownloader:(GlassesMediaDownloader *)downloader didUpdateStatus:(NSString *)status latestImage:(UIImage *)image {
+    self.downloadStatus = status;
+    if (image) {
+        self.latestDownloadedImage = image;
+    }
+    [self reloadDownloadRow];
+}
+
+- (void)mediaDownloader:(GlassesMediaDownloader *)downloader didFinishWithStatus:(NSString *)status error:(NSError *)error latestImage:(UIImage *)image {
+    if (error) {
+        self.downloadStatus = status.length > 0 ? status : @"Wi-Fi transfer failed.";
+    } else {
+        self.downloadStatus = status.length > 0 ? status : @"Wi-Fi transfer completed.";
+    }
+
+    if (image) {
+        self.latestDownloadedImage = image;
+    }
+
+    [self reloadDownloadRow];
 }
 
 @end
