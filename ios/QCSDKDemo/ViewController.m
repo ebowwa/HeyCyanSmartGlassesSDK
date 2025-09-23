@@ -9,6 +9,7 @@
 #import <QCSDK/QCVersionHelper.h>
 #import <QCSDK/QCSDKManager.h>
 #import <QCSDK/QCSDKCmdCreator.h>
+#import "GlassesMediaDownloader.h"
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
@@ -37,6 +38,9 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     
     /// Take AI Image
     QGDeviceActionTypeToggleTakeAIImage,
+
+    /// Download media over Wi-Fi
+    QGDeviceActionTypeDownloadMedia,
 
     /// Reserved for future use
     QGDeviceActionTypeReserved,
@@ -67,6 +71,10 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 @property(nonatomic,assign)BOOL recordingAudio;
 
 @property(nonatomic,strong)NSData *aiImageData;
+
+@property(nonatomic,strong)GlassesMediaDownloader *mediaDownloader;
+@property(nonatomic,copy)NSString *mediaDownloadStatus;
+@property(nonatomic,strong)UIImage *latestDownloadedMediaPreview;
 @end
 
 @implementation ViewController
@@ -328,7 +336,9 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     cell.detailTextLabel.numberOfLines = 0;
     cell.detailTextLabel.lineBreakMode = NSLineBreakByWordWrapping;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
+    cell.imageView.image = nil;
+    cell.detailTextLabel.text = @"";
+
     switch ((QGDeviceActionType)indexPath.row) {
         case QGDeviceActionTypeGetVersion:
             cell.textLabel.text = @"Get hard Version & firm Version";
@@ -360,6 +370,14 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
             if (self.aiImageData) {
                 cell.imageView.image = [UIImage imageWithData:self.aiImageData];
             }
+            break;
+        case QGDeviceActionTypeDownloadMedia:
+            cell.textLabel.text = @"Download Media Over Wi-Fi";
+            cell.detailTextLabel.text = self.mediaDownloadStatus ?: @"Tap to download media files over the device hotspot.";
+            if (self.latestDownloadedMediaPreview) {
+                cell.imageView.image = self.latestDownloadedMediaPreview;
+            }
+            break;
         case QGDeviceActionTypeReserved:
             break;
         default:
@@ -398,11 +416,43 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         case QGDeviceActionTypeToggleTakeAIImage:
             [self takeAIImage];
             break;
+        case QGDeviceActionTypeDownloadMedia:
+            [self downloadMediaOverWiFi];
+            break;
         case QGDeviceActionTypeReserved:
         default:
             break;
     }
 
+}
+
+- (void)downloadMediaOverWiFi {
+    __weak typeof(self) weakSelf = self;
+    self.mediaDownloadStatus = @"Preparing Wi-Fi download...";
+    self.latestDownloadedMediaPreview = nil;
+    [self.tableView reloadData];
+
+    self.mediaDownloader = [[GlassesMediaDownloader alloc] initWithStatusHandler:^(NSString *status, UIImage * _Nullable previewImage) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.mediaDownloadStatus = status;
+            if (previewImage) {
+                weakSelf.latestDownloadedMediaPreview = previewImage;
+            }
+            [weakSelf.tableView reloadData];
+        });
+    }];
+
+    [self.mediaDownloader startDownloadWithCompletion:^(NSError * _Nullable error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (error) {
+                weakSelf.mediaDownloadStatus = [NSString stringWithFormat:@"Download failed: %@", error.localizedDescription ?: @"Unknown error"];
+            } else {
+                weakSelf.mediaDownloadStatus = @"Download complete.";
+            }
+            weakSelf.mediaDownloader = nil;
+            [weakSelf.tableView reloadData];
+        });
+    }];
 }
 
 @end

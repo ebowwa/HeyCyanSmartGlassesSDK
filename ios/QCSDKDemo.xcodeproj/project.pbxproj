@@ -13,7 +13,8 @@
 		AA1313892E2F904500B03938 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1313792E2F904500B03938 /* Assets.xcassets */; };
 		AA13138B2E2F904500B03938 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA13137C2E2F904500B03938 /* LaunchScreen.storyboard */; };
 		AA1313BC2E2F9E9800B03938 /* QCCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */; };
-		AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */; };
+                AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */; };
+                AA9999A22E40000000B03938 /* GlassesMediaDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */; };
 		AA13172A2E31290900B03938 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; };
 		AA13172B2E31290900B03938 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -46,8 +47,10 @@
 		AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCCentralManager.h; sourceTree = "<group>"; };
 		AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCCentralManager.m; sourceTree = "<group>"; };
 		AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCScanViewController.h; sourceTree = "<group>"; };
-		AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCScanViewController.m; sourceTree = "<group>"; };
-		AA1317282E3128F300B03938 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = SOURCE_ROOT; };
+                AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCScanViewController.m; sourceTree = "<group>"; };
+                AA1317282E3128F300B03938 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = SOURCE_ROOT; };
+                AA9999A02E40000000B03938 /* GlassesMediaDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlassesMediaDownloader.h; sourceTree = "<group>"; };
+                AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlassesMediaDownloader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,16 +82,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AA1313842E2F904500B03938 /* QCSDKDemo */ = {
-			isa = PBXGroup;
-			children = (
-				AA1317282E3128F300B03938 /* QCSDK.framework */,
-				AA1313772E2F904500B03938 /* AppDelegate.h */,
-				AA1313782E2F904500B03938 /* AppDelegate.m */,
-				AA1313822E2F904500B03938 /* ViewController.h */,
-				AA1313832E2F904500B03938 /* ViewController.m */,
-				AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */,
-				AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */,
+                AA1313842E2F904500B03938 /* QCSDKDemo */ = {
+                        isa = PBXGroup;
+                        children = (
+                                AA1317282E3128F300B03938 /* QCSDK.framework */,
+                                AA1313772E2F904500B03938 /* AppDelegate.h */,
+                                AA1313782E2F904500B03938 /* AppDelegate.m */,
+                                AA1313822E2F904500B03938 /* ViewController.h */,
+                                AA1313832E2F904500B03938 /* ViewController.m */,
+                                AA9999A02E40000000B03938 /* GlassesMediaDownloader.h */,
+                                AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */,
+                                AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */,
+                                AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */,
 				AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */,
 				AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */,
 				AA1313792E2F904500B03938 /* Assets.xcassets */,
@@ -176,18 +181,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AA1313532E2F903500B03938 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA1313852E2F904500B03938 /* AppDelegate.m in Sources */,
-				AA1313BC2E2F9E9800B03938 /* QCCentralManager.m in Sources */,
-				AA1313862E2F904500B03938 /* main.m in Sources */,
-				AA1313882E2F904500B03938 /* ViewController.m in Sources */,
-				AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+                AA1313532E2F903500B03938 /* Sources */ = {
+                        isa = PBXSourcesBuildPhase;
+                        buildActionMask = 2147483647;
+                        files = (
+                                AA1313852E2F904500B03938 /* AppDelegate.m in Sources */,
+                                AA1313BC2E2F9E9800B03938 /* QCCentralManager.m in Sources */,
+                                AA1313862E2F904500B03938 /* main.m in Sources */,
+                                AA1313882E2F904500B03938 /* ViewController.m in Sources */,
+                                AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */,
+                                AA9999A22E40000000B03938 /* GlassesMediaDownloader.m in Sources */,
+                        );
+                        runOnlyForDeploymentPostprocessing = 0;
+                };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
