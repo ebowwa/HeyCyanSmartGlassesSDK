@@ -10,6 +10,7 @@
 #import <QCSDK/QCSDKManager.h>
 #import <QCSDK/QCSDKCmdCreator.h>
 #import "GlassesMediaDownloader.h"
+#import "MediaGalleryViewController.h"
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
@@ -35,12 +36,21 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 
     /// Start or stop audio recording
     QGDeviceActionTypeToggleAudioRecording,
-    
+
     /// Take AI Image
     QGDeviceActionTypeToggleTakeAIImage,
 
+    /// Switch to Capture Mode
+    QGDeviceActionTypeSwitchToCaptureMode,
+
+    /// Switch to Transfer Mode
+    QGDeviceActionTypeSwitchToTransferMode,
+
     /// Download media over Wi-Fi
     QGDeviceActionTypeDownloadMedia,
+
+    /// View downloaded media gallery
+    QGDeviceActionTypeViewGallery,
 
     /// Reserved for future use
     QGDeviceActionTypeReserved,
@@ -378,6 +388,10 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
                 cell.imageView.image = self.latestDownloadedMediaPreview;
             }
             break;
+        case QGDeviceActionTypeViewGallery:
+            cell.textLabel.text = @"View Media Gallery";
+            cell.detailTextLabel.text = @"Browse and view downloaded photos and videos.";
+            break;
         case QGDeviceActionTypeReserved:
             break;
         default:
@@ -419,6 +433,15 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
         case QGDeviceActionTypeDownloadMedia:
             [self downloadMediaOverWiFi];
             break;
+        case QGDeviceActionTypeViewGallery:
+            [self openMediaGallery];
+            break;
+        case QGDeviceActionTypeSwitchToCaptureMode:
+            [self switchToCaptureMode];
+            break;
+        case QGDeviceActionTypeSwitchToTransferMode:
+            [self switchToTransferMode];
+            break;
         case QGDeviceActionTypeReserved:
         default:
             break;
@@ -452,6 +475,53 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
             weakSelf.mediaDownloader = nil;
             [weakSelf.tableView reloadData];
         });
+    }];
+}
+
+- (void)openMediaGallery {
+    MediaGalleryViewController *galleryVC = [[MediaGalleryViewController alloc] init];
+
+    // Set the media directory path
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = paths.firstObject;
+    NSString *mediaPath = [documentsDirectory stringByAppendingPathComponent:@"GlassesMedia"];
+    galleryVC.mediaDirectoryPath = mediaPath;
+
+    [self.navigationController pushViewController:galleryVC animated:YES];
+}
+
+- (void)switchToCaptureMode {
+    // Try to switch directly to capture mode
+    [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+        NSLog(@"Successfully switched to capture mode");
+        [self.tableView reloadData];
+    } fail:^(NSInteger currentMode) {
+        NSLog(@"Failed to switch to capture mode, current mode: %zd", currentMode);
+        // If switching to photo mode fails, try switching to video mode first (often works as a reset)
+        [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeVideo success:^{
+            NSLog(@"Successfully switched to video mode, now trying capture mode");
+            [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+                NSLog(@"Successfully switched to capture mode");
+                [self.tableView reloadData];
+            } fail:^(NSInteger finalMode) {
+                NSLog(@"Still failed to switch to capture mode, current mode: %zd", finalMode);
+                [self.tableView reloadData];
+            }];
+        } fail:^(NSInteger videoMode) {
+            NSLog(@"Failed to switch to video mode, current mode: %zd", videoMode);
+            [self.tableView reloadData];
+        }];
+    }];
+}
+
+- (void)switchToTransferMode {
+    [QCSDKCmdCreator openWifiWithMode:QCOperatorDeviceModeTransfer success:^(NSString *ssid, NSString *password) {
+        NSLog(@"Successfully switched to transfer mode");
+        NSLog(@"SSID: %@", ssid);
+        [self.tableView reloadData];
+    } fail:^(NSInteger mode) {
+        NSLog(@"Failed to switch to transfer mode, current mode: %zd", mode);
+        [self.tableView reloadData];
     }];
 }
 
