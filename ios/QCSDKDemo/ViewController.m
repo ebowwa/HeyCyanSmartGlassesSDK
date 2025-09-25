@@ -11,6 +11,7 @@
 #import <QCSDK/QCSDKCmdCreator.h>
 #import "GlassesMediaDownloader.h"
 #import "MediaGalleryViewController.h"
+#import <math.h>
 
 #import "QCScanViewController.h"
 #import "QCCentralManager.h"
@@ -491,27 +492,8 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 }
 
 - (void)switchToCaptureMode {
-    // Try to switch directly to capture mode
-    [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
-        NSLog(@"Successfully switched to capture mode");
-        [self.tableView reloadData];
-    } fail:^(NSInteger currentMode) {
-        NSLog(@"Failed to switch to capture mode, current mode: %zd", currentMode);
-        // If switching to photo mode fails, try switching to video mode first (often works as a reset)
-        [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeVideo success:^{
-            NSLog(@"Successfully switched to video mode, now trying capture mode");
-            [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
-                NSLog(@"Successfully switched to capture mode");
-                [self.tableView reloadData];
-            } fail:^(NSInteger finalMode) {
-                NSLog(@"Still failed to switch to capture mode, current mode: %zd", finalMode);
-                [self.tableView reloadData];
-            }];
-        } fail:^(NSInteger videoMode) {
-            NSLog(@"Failed to switch to video mode, current mode: %zd", videoMode);
-            [self.tableView reloadData];
-        }];
-    }];
+    NSLog(@"🔥 User requested capture mode recovery");
+    [self attemptTransferStopWithDelay:0 attempt:1];
 }
 
 - (void)switchToTransferMode {
@@ -522,6 +504,106 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
     } fail:^(NSInteger mode) {
         NSLog(@"Failed to switch to transfer mode, current mode: %zd", mode);
         [self.tableView reloadData];
+    }];
+}
+
+- (void)attemptTransferStopWithDelay:(NSTimeInterval)delay attempt:(NSInteger)attempt {
+    NSLog(@"🔥 Scheduling transfer stop attempt %zd after %.1fs", attempt, delay);
+
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf tryTransferStopWithAttempt:attempt];
+    });
+}
+
+- (void)tryTransferStopWithAttempt:(NSInteger)attempt {
+    NSLog(@"🔥 Trying to stop transfer mode (attempt %zd)", attempt);
+
+    __weak typeof(self) weakSelf = self;
+    [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeTransferStop success:^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) { return; }
+
+        NSLog(@"🔥 ✅ Successfully stopped transfer mode (attempt %zd)", attempt);
+        [strongSelf attemptCaptureModeSwitchWithDelay:2.0 attempt:1];
+    } fail:^(NSInteger currentMode) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) { return; }
+
+        NSLog(@"🔥 ❌ Failed to stop transfer mode, current mode: %zd (attempt %zd)", currentMode, attempt);
+
+        if (attempt < 5) {
+            NSTimeInterval nextDelay = 2.0 * pow(2.0, attempt - 1);
+            [strongSelf attemptTransferStopWithDelay:nextDelay attempt:attempt + 1];
+        } else {
+            NSLog(@"🔥 ❌ Max attempts reached while stopping transfer mode");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongSelf.tableView reloadData];
+            });
+        }
+    }];
+}
+
+- (void)attemptCaptureModeSwitchWithDelay:(NSTimeInterval)delay attempt:(NSInteger)attempt {
+    NSLog(@"🔥 Scheduling capture mode switch attempt %zd after %.1fs", attempt, delay);
+
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf trySwitchToCaptureModeWithAttempt:attempt];
+    });
+}
+
+- (void)trySwitchToCaptureModeWithAttempt:(NSInteger)attempt {
+    NSLog(@"🔥 Trying to switch to capture mode (attempt %zd)", attempt);
+
+    __weak typeof(self) weakSelf = self;
+    [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) { return; }
+
+        NSLog(@"🔥 ✅ Successfully switched to capture mode (attempt %zd)", attempt);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [strongSelf.tableView reloadData];
+        });
+    } fail:^(NSInteger currentMode) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) { return; }
+
+        NSLog(@"🔥 ⚠️ Failed to switch to capture mode, current mode: %zd (attempt %zd)", currentMode, attempt);
+
+        if (attempt < 5) {
+            NSTimeInterval nextDelay = 2.0 * pow(2.0, attempt - 1);
+
+            [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeVideo success:^{
+                NSLog(@"🔥 Switched to video mode, retrying capture mode (attempt %zd)", attempt);
+                [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+                    __strong typeof(weakSelf) finalStrongSelf = weakSelf;
+                    if (!finalStrongSelf) { return; }
+
+                    NSLog(@"🔥 ✅ Successfully switched to capture mode via video mode (attempt %zd)", attempt);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [finalStrongSelf.tableView reloadData];
+                    });
+                } fail:^(NSInteger finalMode) {
+                    __strong typeof(weakSelf) finalStrongSelf = weakSelf;
+                    if (!finalStrongSelf) { return; }
+
+                    NSLog(@"🔥 ❌ Still failed to switch to capture mode, current mode: %zd (attempt %zd)", finalMode, attempt);
+                    [finalStrongSelf attemptCaptureModeSwitchWithDelay:nextDelay attempt:attempt + 1];
+                }];
+            } fail:^(NSInteger videoMode) {
+                __strong typeof(weakSelf) innerStrongSelf = weakSelf;
+                if (!innerStrongSelf) { return; }
+
+                NSLog(@"🔥 ❌ Failed to switch to video mode, current mode: %zd (attempt %zd)", videoMode, attempt);
+                [innerStrongSelf attemptCaptureModeSwitchWithDelay:nextDelay attempt:attempt + 1];
+            }];
+        } else {
+            NSLog(@"🔥 ❌ Max attempts reached, device remains out of capture mode");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongSelf.tableView reloadData];
+            });
+        }
     }];
 }
 
