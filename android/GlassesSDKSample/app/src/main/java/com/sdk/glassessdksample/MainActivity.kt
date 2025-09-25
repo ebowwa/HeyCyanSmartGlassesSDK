@@ -129,7 +129,8 @@ class MainActivity : AppCompatActivity() {
             binding.btnBattery,
             binding.btnVolume,
             binding.btnMediaCount,
-            binding.btnDataDownload
+            binding.btnDataDownload,
+            binding.btnFindDevice
         ) {
             when (this) {
                 binding.btnScan -> {
@@ -357,6 +358,16 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 //无
                             }
+                        }
+                    }
+                }
+                binding.btnFindDevice -> {
+                    // 触发防丢查找设备，眼镜会响铃并闪烁提示
+                    LargeDataHandler.getInstance().glassesControl(
+                        byteArrayOf(0x02, 0x01, 0x0d)
+                    ) { _, it ->
+                        if (it.dataType == 1 && it.errorCode == 0) {
+                            //执行成功，眼镜发出音频/视觉提醒
                         }
                     }
                 }

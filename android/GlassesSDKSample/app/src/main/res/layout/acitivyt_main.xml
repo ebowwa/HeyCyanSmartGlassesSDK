@@ -79,6 +79,12 @@
     </HorizontalScrollView>
 
     <Button
+        android:id="@+id/btn_find_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_16" />
+
+    <Button
         android:id="@+id/btn_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

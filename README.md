@@ -102,6 +102,7 @@ Key methods:
 - `QCOperatorDeviceModeAudio` - Start audio recording
 - `QCOperatorDeviceModeAudioStop` - Stop audio recording
 - `QCOperatorDeviceModeAIPhoto` - Generate AI image
+- `QCOperatorDeviceModeFindDevice` - Trigger audio/visual alerts to locate misplaced glasses
 
 ## Demo App
 
@@ -115,6 +116,7 @@ The included demo application demonstrates all SDK features:
    - Media count tracking
    - Photo/video/audio capture
    - AI image generation
+   - Anti-loss find-device alerts
 
 ## Permissions
 
