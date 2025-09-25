@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB9E74E1FE /* MediaGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB48D45A88 /* MediaGalleryViewController.m */; };
 		AA1313852E2F904500B03938 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313782E2F904500B03938 /* AppDelegate.m */; };
 		AA1313862E2F904500B03938 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA13137D2E2F904500B03938 /* main.m */; };
 		AA1313882E2F904500B03938 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1313832E2F904500B03938 /* ViewController.m */; };
@@ -16,6 +17,7 @@
 		AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */; };
 		AA13172A2E31290900B03938 /* QCSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; };
 		AA13172B2E31290900B03938 /* QCSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA1317282E3128F300B03938 /* QCSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AA9999A22E40000000B03938 /* GlassesMediaDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,6 +35,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		76BE5E782E847A3E008B17F4 /* QCSDKDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QCSDKDemo.entitlements; sourceTree = "<group>"; };
 		AA1313572E2F903500B03938 /* QCSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QCSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA1313772E2F904500B03938 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		AA1313782E2F904500B03938 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -48,6 +51,10 @@
 		AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QCScanViewController.h; sourceTree = "<group>"; };
 		AA1316AE2E2FBA0400B03938 /* QCScanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QCScanViewController.m; sourceTree = "<group>"; };
 		AA1317282E3128F300B03938 /* QCSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QCSDK.framework; sourceTree = SOURCE_ROOT; };
+		AA9999A02E40000000B03938 /* GlassesMediaDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlassesMediaDownloader.h; sourceTree = "<group>"; };
+		AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlassesMediaDownloader.m; sourceTree = "<group>"; };
+		BBEA4D0FAD /* MediaGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaGalleryViewController.h; sourceTree = "<group>"; };
+		BB48D45A88 /* MediaGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaGalleryViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,11 +89,16 @@
 		AA1313842E2F904500B03938 /* QCSDKDemo */ = {
 			isa = PBXGroup;
 			children = (
+				76BE5E782E847A3E008B17F4 /* QCSDKDemo.entitlements */,
 				AA1317282E3128F300B03938 /* QCSDK.framework */,
 				AA1313772E2F904500B03938 /* AppDelegate.h */,
 				AA1313782E2F904500B03938 /* AppDelegate.m */,
 				AA1313822E2F904500B03938 /* ViewController.h */,
 				AA1313832E2F904500B03938 /* ViewController.m */,
+				AA9999A02E40000000B03938 /* GlassesMediaDownloader.h */,
+				AA9999A12E40000000B03938 /* GlassesMediaDownloader.m */,
+				BBEA4D0FAD /* MediaGalleryViewController.h */,
+				BB48D45A88 /* MediaGalleryViewController.m */,
 				AA1313BA2E2F9E9800B03938 /* QCCentralManager.h */,
 				AA1313BB2E2F9E9800B03938 /* QCCentralManager.m */,
 				AA1316AD2E2FBA0400B03938 /* QCScanViewController.h */,
@@ -185,6 +197,8 @@
 				AA1313862E2F904500B03938 /* main.m in Sources */,
 				AA1313882E2F904500B03938 /* ViewController.m in Sources */,
 				AA1316AF2E2FBA0400B03938 /* QCScanViewController.m in Sources */,
+				AA9999A22E40000000B03938 /* GlassesMediaDownloader.m in Sources */,
+				BB9E74E1FE /* MediaGalleryViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +221,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = QCSDKDemo/QCSDKDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42R8ZPM5N8;
@@ -229,7 +244,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.qcwx.dev.QCSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebowwa.QCSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -241,6 +256,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = QCSDKDemo/QCSDKDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 42R8ZPM5N8;
@@ -263,7 +279,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.qcwx.dev.QCSDKDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ebowwa.QCSDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
