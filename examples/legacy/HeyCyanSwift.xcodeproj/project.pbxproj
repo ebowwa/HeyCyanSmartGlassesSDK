@@ -77,19 +77,6 @@
 		76380FB02E4FA05D00F42622 /* GlassesFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassesFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7638113C2E4FA47100F42622 /* Exceptions for "GlassesFramework" folder in "GlassesFramework" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				GlassesFramework.h,
-				GlassesFrameworkTypes.h,
-				QCCentralManager.h,
-				QCSDKWrapper.h,
-			);
-			target = 76380FA52E4FA05C00F42622 /* GlassesFramework */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		763803A02E4EFA8500F42622 /* HeyCyanSwift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -108,9 +95,6 @@
 		};
 		76380FA72E4FA05D00F42622 /* GlassesFramework */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				7638113C2E4FA47100F42622 /* Exceptions for "GlassesFramework" folder in "GlassesFramework" target */,
-			);
 			path = GlassesFramework;
 			sourceTree = "<group>";
 		};
