@@ -17,6 +17,7 @@ This repository provides SDKs for developers to integrate HeyCyan smart glasses 
 - **Bluetooth LE Scanning**: Discover nearby HeyCyan glasses
 - **Connection Management**: Connect/disconnect and manage device state
 - **Device Information**: Retrieve hardware/firmware versions and MAC address
+- **Safety Locator**: Activate audio/visual alerts to find misplaced glasses
 
 ### Media Controls
 - **Photo Capture**: Remote shutter control for taking photos
@@ -102,6 +103,7 @@ Key methods:
 - `QCOperatorDeviceModeAudio` - Start audio recording
 - `QCOperatorDeviceModeAudioStop` - Stop audio recording
 - `QCOperatorDeviceModeAIPhoto` - Generate AI image
+- `QCOperatorDeviceModeFindDevice` - Trigger audible chime and LED flash to locate glasses
 
 ## Demo App
 

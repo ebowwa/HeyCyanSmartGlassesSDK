@@ -307,9 +307,54 @@ class RealDeviceIntegrationTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        
+
         bluetoothManager.takeAIImage()
-        
+
         wait(for: [expectation], timeout: 10.0)
+    }
+
+    // MARK: - Safety Locator Test
+
+    func testFindDeviceAlert() {
+        guard findAndConnectToGlasses() else {
+            XCTFail("Failed to connect to glasses")
+            return
+        }
+
+        print("📣 Testing find device safety alert...")
+
+        let expectation = XCTestExpectation(description: "Find device alert")
+        var didReceiveSuccess = false
+
+        let successObserver = NotificationCenter.default.addObserver(
+            forName: .findDeviceAlertTriggered,
+            object: nil,
+            queue: .main
+        ) { _ in
+            print("✅ Locator alert activated")
+            didReceiveSuccess = true
+            expectation.fulfill()
+        }
+
+        let failureObserver = NotificationCenter.default.addObserver(
+            forName: .findDeviceAlertFailed,
+            object: nil,
+            queue: .main
+        ) { notification in
+            print("❌ Locator alert failed")
+            if let error = notification.userInfo?["error"] as? String {
+                print("Error: \(error)")
+            }
+            expectation.fulfill()
+        }
+
+        bluetoothManager.findDevice()
+
+        wait(for: [expectation], timeout: 6.0)
+
+        NotificationCenter.default.removeObserver(successObserver)
+        NotificationCenter.default.removeObserver(failureObserver)
+
+        XCTAssertTrue(didReceiveSuccess, "Expected locator alert to activate successfully")
     }
 }

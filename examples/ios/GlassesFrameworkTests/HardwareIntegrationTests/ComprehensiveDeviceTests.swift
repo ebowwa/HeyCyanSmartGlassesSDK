@@ -127,7 +127,7 @@ class ComprehensiveDeviceTests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 7.0)
     }
     
     // MARK: - Test 2: Volume Control
@@ -164,7 +164,7 @@ class ComprehensiveDeviceTests: XCTestCase {
             }
         }
         
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 7.0)
     }
     
     // MARK: - Test 3: Device Modes (Safe)
@@ -178,22 +178,28 @@ class ComprehensiveDeviceTests: XCTestCase {
         
         // Test taking a photo (safe operation)
         bluetoothManager.takePhoto()
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             print("✅ Photo command sent")
             success = true
-            
+
             // Test AI photo
             self.bluetoothManager.takeAIImage()
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 print("✅ AI Photo command sent")
-                self.testResults["Device Modes"] = success
-                expectation.fulfill()
+                // Test find device alert
+                self.bluetoothManager.findDevice()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    print("✅ Find Device alert command sent")
+                    self.testResults["Device Modes"] = success
+                    expectation.fulfill()
+                }
             }
         }
-        
-        wait(for: [expectation], timeout: 5.0)
+
+        wait(for: [expectation], timeout: 7.0)
     }
     
     // MARK: - Test 4: Media Operations

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import GlassesFramework
 
 struct DeviceActionsListView: View {
@@ -37,6 +38,8 @@ struct DeviceActionRow: View {
                     bluetoothManager: bluetoothManager,
                     handler: aiImageHandler
                 )
+            } else if action == .findDevice {
+                FindDeviceActionRow(bluetoothManager: bluetoothManager)
             } else {
                 StandardActionRow(
                     action: action,
@@ -93,9 +96,10 @@ private struct StandardActionRow: View {
         case .toggleVideoRecording: return "video"
         case .toggleAudioRecording: return "mic"
         case .takeAIImage: return "sparkles"
+        case .findDevice: return "dot.radiowaves.left.and.right"
         }
     }
-    
+
     private var detailText: String? {
         let info = bluetoothManager.deviceInfo
         
@@ -119,6 +123,8 @@ private struct StandardActionRow: View {
             return info.isRecordingVideo ? "Recording..." : "Tap to start recording"
         case .toggleAudioRecording:
             return info.isRecordingAudio ? "Recording..." : "Tap to start recording"
+        case .findDevice:
+            return "Play an audible chime and flash the LEDs to help locate your glasses."
         default:
             return nil
         }
@@ -143,6 +149,64 @@ private struct StandardActionRow: View {
             bluetoothManager.toggleAudioRecording()
         case .takeAIImage:
             bluetoothManager.takeAIImage()
+        case .findDevice:
+            bluetoothManager.findDevice()
+        }
+    }
+}
+
+// Specialized row for the Find Device safety alert
+private struct FindDeviceActionRow: View {
+    @ObservedObject var bluetoothManager: BluetoothManager
+    @State private var showAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+
+    private let detailText = "Play an audible chime and flash the LEDs to help locate your glasses."
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "dot.radiowaves.left.and.right")
+                    .foregroundColor(.blue)
+                    .frame(width: 30)
+                Text(DeviceActionType.findDevice.title)
+                    .font(.headline)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+
+            Text(detailText)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(nil)
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            bluetoothManager.findDevice()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .findDeviceAlertTriggered)) { _ in
+            alertTitle = "Locator Activated"
+            alertMessage = "Your glasses will now play an audio alert and flash their LEDs so you can quickly find them."
+            showAlert = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .findDeviceAlertFailed)) { notification in
+            alertTitle = "Unable to Activate"
+            if let error = notification.userInfo?["error"] as? String {
+                alertMessage = error
+            } else {
+                alertMessage = "The glasses are busy. Try again after the current operation finishes."
+            }
+            showAlert = true
+        }
+        .alert(alertTitle, isPresented: $showAlert) {
+            Button("OK", role: .cancel) {
+                showAlert = false
+            }
+        } message: {
+            Text(alertMessage)
         }
     }
 }
