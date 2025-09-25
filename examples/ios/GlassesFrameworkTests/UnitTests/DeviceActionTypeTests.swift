@@ -19,6 +19,7 @@ class DeviceActionTypeTests: XCTestCase {
         XCTAssertEqual(DeviceActionType.toggleVideoRecording.rawValue, 5)
         XCTAssertEqual(DeviceActionType.toggleAudioRecording.rawValue, 6)
         XCTAssertEqual(DeviceActionType.takeAIImage.rawValue, 7)
+        XCTAssertEqual(DeviceActionType.findDevice.rawValue, 8)
     }
     
     func testDeviceActionTypeTitles() {
@@ -30,10 +31,11 @@ class DeviceActionTypeTests: XCTestCase {
         XCTAssertEqual(DeviceActionType.toggleVideoRecording.title, "Toggle Video Recording")
         XCTAssertEqual(DeviceActionType.toggleAudioRecording.title, "Toggle Audio Recording")
         XCTAssertEqual(DeviceActionType.takeAIImage.title, "Take AI Image")
+        XCTAssertEqual(DeviceActionType.findDevice.title, "Find My Glasses")
     }
     
     func testAllCasesCount() {
-        XCTAssertEqual(DeviceActionType.allCases.count, 8)
+        XCTAssertEqual(DeviceActionType.allCases.count, 9)
     }
     
     func testAllCasesContainsAllTypes() {
@@ -47,6 +49,7 @@ class DeviceActionTypeTests: XCTestCase {
         XCTAssertTrue(allCases.contains(.toggleVideoRecording))
         XCTAssertTrue(allCases.contains(.toggleAudioRecording))
         XCTAssertTrue(allCases.contains(.takeAIImage))
+        XCTAssertTrue(allCases.contains(.findDevice))
     }
     
     func testIterationOverAllCases() {
@@ -54,7 +57,7 @@ class DeviceActionTypeTests: XCTestCase {
         for _ in DeviceActionType.allCases {
             count += 1
         }
-        XCTAssertEqual(count, 8)
+        XCTAssertEqual(count, 9)
     }
     
     func testTitleUniqueness() {
