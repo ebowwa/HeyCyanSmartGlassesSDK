@@ -492,8 +492,27 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 }
 
 - (void)switchToCaptureMode {
-    NSLog(@"🔥 User requested capture mode recovery");
-    [self attemptTransferStopWithDelay:0 attempt:1];
+    // Try to switch directly to capture mode
+    [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+        NSLog(@"Successfully switched to capture mode");
+        [self.tableView reloadData];
+    } fail:^(NSInteger currentMode) {
+        NSLog(@"Failed to switch to capture mode, current mode: %zd", currentMode);
+        // If switching to photo mode fails, try switching to video mode first (often works as a reset)
+        [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModeVideo success:^{
+            NSLog(@"Successfully switched to video mode, now trying capture mode");
+            [QCSDKCmdCreator setDeviceMode:QCOperatorDeviceModePhoto success:^{
+                NSLog(@"Successfully switched to capture mode");
+                [self.tableView reloadData];
+            } fail:^(NSInteger finalMode) {
+                NSLog(@"Still failed to switch to capture mode, current mode: %zd", finalMode);
+                [self.tableView reloadData];
+            }];
+        } fail:^(NSInteger videoMode) {
+            NSLog(@"Failed to switch to video mode, current mode: %zd", videoMode);
+            [self.tableView reloadData];
+        }];
+    }];
 }
 
 - (void)switchToTransferMode {

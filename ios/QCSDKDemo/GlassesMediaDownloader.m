@@ -3,6 +3,8 @@
 #import <QCSDK/QCSDKCmdCreator.h>
 #import <NetworkExtension/NetworkExtension.h>
 #import <SystemConfiguration/CaptiveNetwork.h>
+#include <ifaddrs.h>
+#include <arpa/inet.h>
 
 static NSString * const GlassesMediaDownloaderErrorDomain = @"GlassesMediaDownloaderErrorDomain";
 
@@ -32,7 +34,17 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
     self = [super init];
     if (self) {
         _statusHandler = [statusHandler copy];
-        _session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
+
+        // Create custom session configuration that forces WiFi
+        NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        config.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        config.timeoutIntervalForRequest = 10.0;
+        config.timeoutIntervalForResource = 30.0;
+        config.waitsForConnectivity = YES;
+        config.allowsCellularAccess = NO; // Force WiFi only
+        config.discretionary = NO;
+
+        _session = [NSURLSession sessionWithConfiguration:config];
         _isRequestingWifiCredentials = NO;
     }
     return self;
@@ -250,7 +262,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                             cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                         timeoutInterval:adjustedTimeout];
 
-    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request
                                                                  completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
@@ -277,13 +289,6 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
     [task resume];
 }
 
-- (void)verifyWiFiConnectionAndProceed {
-    NSLog(@"🔥 Verifying WiFi connection is stable before proceeding");
-    [self updateStatus:@"Verifying WiFi connection..." preview:nil];
-
-    // Test connectivity multiple times to ensure stable connection
-    [self testConnectivityWithRetries:3 attempt:1];
-}
 
 - (void)testConnectivityWithRetries:(NSInteger)maxRetries attempt:(NSInteger)attempt {
     if (self->_deviceIP.length == 0) {
@@ -297,7 +302,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                             cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                         timeoutInterval:2.0]; // Reduced from 3.0
 
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request
+    [[self.session dataTaskWithRequest:request
                                      completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
@@ -343,7 +348,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                             cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                         timeoutInterval:3.0];
 
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request
+    [[self.session dataTaskWithRequest:request
                                      completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL canReachInternet = !error && ((NSHTTPURLResponse *)response).statusCode == 200;
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -419,7 +424,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                                 cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                             timeoutInterval:2.0];
 
-        [[[NSURLSession sharedSession] dataTaskWithRequest:request
+        [[self.session dataTaskWithRequest:request
                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
                 workingIP = ip;
@@ -477,7 +482,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
         NSURL *testURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/files/media.config", ip]];
         NSURLRequest *request = [NSURLRequest requestWithURL:testURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:2.0];
 
-        [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        [[self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
                 workingIP = ip;
             }
@@ -534,7 +539,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
     NSURL *testURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/files/media.config", ip]];
     NSURLRequest *request = [NSURLRequest requestWithURL:testURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5.0];
 
-    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
                 NSLog(@"🔥 Successfully connected to %@", ip);
@@ -568,7 +573,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
         NSURL *testURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/files/media.config", ip]];
         NSURLRequest *request = [NSURLRequest requestWithURL:testURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:1.5];
 
-        [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        [[self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
                 workingIP = ip;
                 NSLog(@"🔥 Found working priority IP: %@", ip);
@@ -587,7 +592,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
             NSURL *testURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/files/media.config", ip]];
             NSURLRequest *request = [NSURLRequest requestWithURL:testURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:1.0];
 
-            [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            [[self.session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                 if (!error && data && ((NSHTTPURLResponse *)response).statusCode == 200) {
                     workingIP = ip;
                     NSLog(@"🔥 Found working fallback IP: %@", ip);
@@ -648,7 +653,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                                 cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                             timeoutInterval:1.5]; // Reduced from 3.0
 
-        [[[NSURLSession sharedSession] dataTaskWithRequest:request
+        [[self.session dataTaskWithRequest:request
                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (!error) {
                 NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
@@ -688,7 +693,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                                     cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                 timeoutInterval:1.0];
 
-            [[[NSURLSession sharedSession] dataTaskWithRequest:request
+            [[self.session dataTaskWithRequest:request
                                              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                 if (!error) {
                     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
@@ -952,7 +957,7 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
                                                 cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                             timeoutInterval:1.0];
 
-        [[[NSURLSession sharedSession] dataTaskWithRequest:request
+        [[self.session dataTaskWithRequest:request
                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             if (!error && ((NSHTTPURLResponse *)response).statusCode == 200) {
                 canReachTarget = YES;
@@ -1228,6 +1233,65 @@ typedef NS_ENUM(NSInteger, GlassesMediaDownloaderErrorCode) {
         });
     }
     self.completionHandler = nil;
+}
+
+- (BOOL)isUsingWiFiConnection {
+    // Check if we have a valid WiFi connection to the device
+    struct ifaddrs *interfaces;
+    if (!getifaddrs(&interfaces)) {
+        struct ifaddrs *interface;
+        for (interface = interfaces; interface; interface = interface->ifa_next) {
+            if (interface->ifa_addr->sa_family == AF_INET) {
+                NSString *interfaceName = [NSString stringWithUTF8String:interface->ifa_name];
+                // Check for common WiFi interface names
+                if ([interfaceName hasPrefix:@"en"] || [interfaceName hasPrefix:@"bridge"]) {
+                    // Get the IP address
+                    struct sockaddr_in *addr = (struct sockaddr_in *)interface->ifa_addr;
+                    char addr_buf[INET_ADDRSTRLEN];
+                    inet_ntop(AF_INET, &(addr->sin_addr), addr_buf, INET_ADDRSTRLEN);
+                    NSString *ip = [NSString stringWithUTF8String:addr_buf];
+
+                    NSLog(@"🔥 Network interface: %@ - IP: %@", interfaceName, ip);
+
+                    // Check if this IP is in the same subnet as our device
+                    if ([self isIP:ip inSameSubnetAs:self.deviceIP]) {
+                        freeifaddrs(interfaces);
+                        return YES;
+                    }
+                }
+            }
+        }
+        freeifaddrs(interfaces);
+    }
+    return NO;
+}
+
+- (BOOL)isIP:(NSString *)ip1 inSameSubnetAs:(NSString *)ip2 {
+    // Simple subnet check for common private ranges
+    NSArray *ip1Components = [ip1 componentsSeparatedByString:@"."];
+    NSArray *ip2Components = [ip2 componentsSeparatedByString:@"."];
+
+    if (ip1Components.count >= 3 && ip2Components.count >= 3) {
+        // Check first three octets for /24 subnet
+        return [ip1Components[0] isEqualToString:ip2Components[0]] &&
+               [ip1Components[1] isEqualToString:ip2Components[1]] &&
+               [ip1Components[2] isEqualToString:ip2Components[2]];
+    }
+    return NO;
+}
+
+- (void)verifyWiFiConnectionAndProceed {
+    NSLog(@"🔥 Verifying WiFi connection is stable before proceeding");
+    [self updateStatus:@"Verifying WiFi connection..." preview:nil];
+
+    // Check if we're actually using WiFi
+    if ([self isUsingWiFiConnection]) {
+        NSLog(@"🔥 WiFi interface detected, proceeding with connectivity test");
+        [self testConnectivityWithRetries:3 attempt:1];
+    } else {
+        NSLog(@"🔥 WARNING: No WiFi interface detected, forcing connection anyway");
+        [self testConnectivityWithRetries:3 attempt:1];
+    }
 }
 
 @end
