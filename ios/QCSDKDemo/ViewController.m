@@ -225,7 +225,7 @@ typedef NS_ENUM(NSInteger, QGDeviceActionType) {
 }
 
 - (void)recordAudio {
-    if (self.recordingVideo) {
+    if (self.recordingAudio) {
         [QCSDKCmdCreator setDeviceMode:(QCOperatorDeviceModeAudioStop) success:^{
             self.recordingAudio = NO;
             [self.tableView reloadData];
