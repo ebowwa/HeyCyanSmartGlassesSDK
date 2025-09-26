@@ -92,6 +92,9 @@ The framework is built with a modular architecture:
 - ``BluetoothManager/toggleVideoRecording()``
 - ``BluetoothManager/toggleAudioRecording()``
 - ``BluetoothManager/takeAIImage()``
+- ``BluetoothManager/findDevice()``
+
+`findDevice()` activates the glasses' anti-loss safety mode by playing a loud audio cue and flashing the onboard LEDs so users can quickly locate misplaced hardware.
 
 ### Audio and Volume Control
 

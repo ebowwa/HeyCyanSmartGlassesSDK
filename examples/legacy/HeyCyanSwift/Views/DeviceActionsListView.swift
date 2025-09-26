@@ -93,9 +93,10 @@ private struct StandardActionRow: View {
         case .toggleVideoRecording: return "video"
         case .toggleAudioRecording: return "mic"
         case .takeAIImage: return "sparkles"
+        case .findDevice: return "dot.radiowaves.left.and.right"
         }
     }
-    
+
     private var detailText: String? {
         let info = bluetoothManager.deviceInfo
         
@@ -119,6 +120,8 @@ private struct StandardActionRow: View {
             return info.isRecordingVideo ? "Recording..." : "Tap to start recording"
         case .toggleAudioRecording:
             return info.isRecordingAudio ? "Recording..." : "Tap to start recording"
+        case .findDevice:
+            return "Play loud audio and flash LEDs to locate nearby glasses."
         default:
             return nil
         }
@@ -143,6 +146,8 @@ private struct StandardActionRow: View {
             bluetoothManager.toggleAudioRecording()
         case .takeAIImage:
             bluetoothManager.takeAIImage()
+        case .findDevice:
+            bluetoothManager.findDevice()
         }
     }
 }

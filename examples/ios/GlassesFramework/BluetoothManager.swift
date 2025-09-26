@@ -22,6 +22,11 @@ public enum DeviceOperationMode: Int {
     case aiPhoto = 0x06
     case speechRecognition = 0x07
     case audio = 0x08
+    case transferStop = 0x09
+    case factoryReset = 0x0A
+    case speechRecognitionStop = 0x0B
+    case audioStop = 0x0C
+    case findDevice = 0x0D
     
     var qcMode: QCOperatorDeviceMode {
         return QCOperatorDeviceMode(rawValue: self.rawValue) ?? .unkown
@@ -53,6 +58,7 @@ public enum DeviceActionType: Int, CaseIterable {
     case toggleVideoRecording
     case toggleAudioRecording
     case takeAIImage
+    case findDevice
     
     public var title: String {
         switch self {
@@ -72,6 +78,8 @@ public enum DeviceActionType: Int, CaseIterable {
             return "Toggle Audio Recording"
         case .takeAIImage:
             return "Take AI Image"
+        case .findDevice:
+            return "Find My Glasses"
         }
     }
 }
@@ -282,7 +290,7 @@ public class BluetoothManager: NSObject, ObservableObject {
             print("Failed to toggle audio, current mode: \(mode)")
         })
     }
-    
+
     public func takeAIImage() {
         print("📸 Requesting AI image capture...")
         QCSDKCmdCreator.setDeviceMode(.aiPhoto, success: {
@@ -298,6 +306,16 @@ public class BluetoothManager: NSObject, ObservableObject {
                     userInfo: ["error": "Device is in mode \(mode)"]
                 )
             }
+        })
+    }
+
+    /// Triggers the device's anti-loss locator alert which plays audio and flashes LEDs.
+    public func findDevice() {
+        print("📢 Triggering find device alert...")
+        QCSDKCmdCreator.setDeviceMode(.findDevice, success: {
+            print("✅ Find device alert sent")
+        }, fail: { mode in
+            print("❌ Failed to trigger find device alert, current mode: \(mode)")
         })
     }
 }

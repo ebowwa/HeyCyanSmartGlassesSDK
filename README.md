@@ -102,6 +102,7 @@ Key methods:
 - `QCOperatorDeviceModeAudio` - Start audio recording
 - `QCOperatorDeviceModeAudioStop` - Stop audio recording
 - `QCOperatorDeviceModeAIPhoto` - Generate AI image
+- `QCOperatorDeviceModeFindDevice` - Trigger anti-loss audio/visual alert
 
 ## Demo App
 
@@ -114,6 +115,7 @@ The included demo application demonstrates all SDK features:
    - Battery status monitoring
    - Media count tracking
    - Photo/video/audio capture
+   - Anti-loss find device alerts
    - AI image generation
 
 ## Permissions
