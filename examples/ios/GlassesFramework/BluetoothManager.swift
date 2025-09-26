@@ -22,7 +22,8 @@ public enum DeviceOperationMode: Int {
     case aiPhoto = 0x06
     case speechRecognition = 0x07
     case audio = 0x08
-    
+    case findDevice = 0x0D
+
     var qcMode: QCOperatorDeviceMode {
         return QCOperatorDeviceMode(rawValue: self.rawValue) ?? .unkown
     }
@@ -53,7 +54,8 @@ public enum DeviceActionType: Int, CaseIterable {
     case toggleVideoRecording
     case toggleAudioRecording
     case takeAIImage
-    
+    case findDevice
+
     public var title: String {
         switch self {
         case .getVersion:
@@ -72,6 +74,8 @@ public enum DeviceActionType: Int, CaseIterable {
             return "Toggle Audio Recording"
         case .takeAIImage:
             return "Take AI Image"
+        case .findDevice:
+            return "Find Device"
         }
     }
 }
@@ -294,6 +298,25 @@ public class BluetoothManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: Notification.Name("AIImageCaptureFailed"),
+                    object: nil,
+                    userInfo: ["error": "Device is in mode \(mode)"]
+                )
+            }
+        })
+    }
+
+    public func findDevice() {
+        print("📣 Triggering find device alert...")
+        QCSDKCmdCreator.setDeviceMode(.findDevice, success: {
+            print("✅ Find Device alert sent")
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .findDeviceAlertTriggered, object: nil)
+            }
+        }, fail: { mode in
+            print("❌ Failed to trigger find device alert, current mode: \(mode)")
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: .findDeviceAlertFailed,
                     object: nil,
                     userInfo: ["error": "Device is in mode \(mode)"]
                 )

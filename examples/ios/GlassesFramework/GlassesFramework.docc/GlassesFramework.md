@@ -9,8 +9,9 @@ GlassesFramework provides a complete Swift and Objective-C interface for interac
 ### Key Features
 
 - **Bluetooth Device Management**: Scan, connect, and manage HeyCyan glasses devices
-- **Real-time Device Information**: Battery status, firmware versions, and device state monitoring  
+- **Real-time Device Information**: Battery status, firmware versions, and device state monitoring
 - **Media Controls**: Take photos, record videos, capture audio, and trigger AI image processing
+- **Safety Locator**: Trigger audible chimes and LED flashes when the glasses are misplaced
 - **Cross-Platform Support**: Works on iOS 13.0+ with full support for modern Swift features
 
 ## Getting Started
@@ -92,6 +93,9 @@ The framework is built with a modular architecture:
 - ``BluetoothManager/toggleVideoRecording()``
 - ``BluetoothManager/toggleAudioRecording()``
 - ``BluetoothManager/takeAIImage()``
+- ``BluetoothManager/findDevice()``
+
+Use ``BluetoothManager/findDevice()`` to send the ``QCOperatorDeviceModeFindDevice`` (0x0D) command. The glasses respond with a loud chime and flashing LEDs for quick retrieval—ideal for anti-loss and general safety scenarios.
 
 ### Audio and Volume Control
 
@@ -229,6 +233,8 @@ bluetoothManager.setAISpeakMode(.stop) { success in
 The framework posts notifications for important events:
 
 - `Notification.Name.aiImageReceived`: Posted when an AI image is received from the glasses
+- `Notification.Name.findDeviceAlertTriggered`: Posted when the locator alert successfully activates on the glasses
+- `Notification.Name.findDeviceAlertFailed`: Posted when the locator alert could not be triggered due to the current device mode
 
 ## Requirements
 
