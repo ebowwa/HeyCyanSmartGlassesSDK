@@ -16,4 +16,5 @@
     <string name="text_13">音量读取</string>
     <string name="text_14">读取眼镜媒体的数量</string>
     <string name="text_15">BLE+WiFi P2P数据下载</string>
+    <string name="text_16">查找设备（防丢提醒）</string>
 </resources>
