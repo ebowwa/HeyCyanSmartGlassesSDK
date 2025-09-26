@@ -4,7 +4,7 @@ Comprehensive SDKs for controlling HeyCyan smart glasses via Bluetooth Low Energ
 
 ## Platform Support
 
-- **iOS**: Full SDK available with demo application (see `ios/` directory)
+- **iOS**: Full SDK available with demo application (see `ios/` directory). For Wi-Fi onboarding guidance, refer to [`ios/docs/wifi-hotspot-configuration.md`](ios/docs/wifi-hotspot-configuration.md).
 - **Android**: Full SDK available with demo application (see `android/` directory)
 
 ## Overview
