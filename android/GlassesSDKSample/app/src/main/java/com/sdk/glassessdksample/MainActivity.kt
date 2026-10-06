@@ -449,7 +449,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 } else {
                                     Log.e("DataDownload", "Failed to create P2P group")
-                                    withContext(Dispatchers.Main) {
+                                    runOnUiThread {
                                         showDownloadError("Failed to create P2P group")
                                     }
                                 }
@@ -583,8 +583,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    
-    private fun parseMediaList(content: String) {
+
+    private suspend fun parseMediaList(content: String) {
         // 解析媒体配置文件内容 - 这是一个包含JPG文件名的文本文件
         Log.i("DataDownload", "Parsing media list content...")
         

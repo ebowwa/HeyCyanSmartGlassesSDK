@@ -32,8 +32,8 @@ class WifiP2pBroadcastReceiver(
                 // Request updated list of peers
                 wifiP2pManagerSingleton.requestPeers()
             }
-            
-            WifiP2pManager.WIFI_P2P_CONNECTION_STATE_CHANGE_ACTION -> {
+
+            WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO)
                 Log.d(TAG, "Connection state changed: ${networkInfo?.isConnected}")
                 

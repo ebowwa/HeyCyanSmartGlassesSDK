@@ -1,6 +1,7 @@
 package com.sdk.glassessdksample.ui.wifi.p2p
 
 import android.content.Context
+import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
@@ -17,6 +18,7 @@ class WifiP2pManagerSingleton private constructor(private val context: Context) 
     companion object {
         @Volatile
         private var instance: WifiP2pManagerSingleton? = null
+        private const val TAG = "WifiP2pManagerSingleton"
         
         fun getInstance(context: Context): WifiP2pManagerSingleton {
             return instance ?: synchronized(this) {
@@ -39,7 +41,7 @@ class WifiP2pManagerSingleton private constructor(private val context: Context) 
     private val intentFilter = IntentFilter().apply {
         addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-        addAction(WifiP2pManager.WIFI_P2P_CONNECTION_STATE_CHANGE_ACTION)
+        addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
     }
     
@@ -307,7 +309,5 @@ class WifiP2pManagerSingleton private constructor(private val context: Context) 
         fun retryAlsoFailed()
     }
     
-    companion object {
-        private const val TAG = "WifiP2pManagerSingleton"
-    }
+
 } 

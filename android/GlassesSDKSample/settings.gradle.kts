@@ -31,4 +31,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "GlassesSDKSample"
 include(":app")
-include(":LIB_GLASSES_SDK")
